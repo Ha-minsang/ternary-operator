@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: ternary-operator
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show-sql: true
