@@ -1,4 +1,4 @@
-package com.team3.ternaryoperator.domain.users.dto.request;
+package com.team3.ternaryoperator.domain.user.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

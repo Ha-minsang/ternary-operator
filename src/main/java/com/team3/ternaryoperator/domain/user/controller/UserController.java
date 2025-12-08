@@ -1,9 +1,9 @@
-package com.team3.ternaryoperator.domain.users.controller;
+package com.team3.ternaryoperator.domain.user.controller;
 
 import com.team3.ternaryoperator.common.dto.CommonResponse;
-import com.team3.ternaryoperator.domain.users.dto.request.UserCreateRequest;
-import com.team3.ternaryoperator.domain.users.dto.response.UserCreateResponse;
-import com.team3.ternaryoperator.domain.users.service.UserService;
+import com.team3.ternaryoperator.domain.user.dto.request.UserCreateRequest;
+import com.team3.ternaryoperator.domain.user.dto.response.UserCreateResponse;
+import com.team3.ternaryoperator.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

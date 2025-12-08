@@ -1,12 +1,12 @@
-package com.team3.ternaryoperator.domain.users.service;
+package com.team3.ternaryoperator.domain.user.service;
 
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
-import com.team3.ternaryoperator.domain.users.dto.request.UserCreateRequest;
-import com.team3.ternaryoperator.domain.users.dto.response.UserCreateResponse;
-import com.team3.ternaryoperator.domain.users.enums.UserRole;
-import com.team3.ternaryoperator.domain.users.repository.UserRepository;
+import com.team3.ternaryoperator.domain.user.dto.request.UserCreateRequest;
+import com.team3.ternaryoperator.domain.user.dto.response.UserCreateResponse;
+import com.team3.ternaryoperator.domain.user.enums.UserRole;
+import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

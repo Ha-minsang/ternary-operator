@@ -1,7 +1,7 @@
-package com.team3.ternaryoperator.domain.users.dto.response;
+package com.team3.ternaryoperator.domain.user.dto.response;
 
 import com.team3.ternaryoperator.common.entity.User;
-import com.team3.ternaryoperator.domain.users.enums.UserRole;
+import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
