@@ -22,17 +22,17 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "유저가 존재하지 않습니다."),
     DUPLICATE_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 사용자명입니다."),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용중인 이메일입니다."),
+
     // Task 관련 ErrorCode
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "작업을 찾을 수 없습니다."),
 
     // Team 관련 ErrorCode
 
     // Comment 관련 ErrorCode
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다.");
 
     // Activity 관련 ErrorCode
 
-    // ===== Task / User / Comment 관련 =====
-    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "작업을 찾을 수 없습니다."),
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;
