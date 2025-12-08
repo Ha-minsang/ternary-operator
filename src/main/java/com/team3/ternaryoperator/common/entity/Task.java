@@ -1,6 +1,6 @@
 package com.team3.ternaryoperator.common.entity;
 
-import com.team3.ternaryoperator.domain.tasks.enums.*;
+import com.team3.ternaryoperator.domain.task.enums.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

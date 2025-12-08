@@ -1,4 +1,4 @@
-package com.team3.ternaryoperator.domain.tasks.model.request;
+package com.team3.ternaryoperator.domain.task.model.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

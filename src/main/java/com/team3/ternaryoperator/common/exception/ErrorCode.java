@@ -19,7 +19,7 @@ public enum ErrorCode {
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "요청 값이 올바르지 않습니다: "),
 
     // User 관련 ErrorCode
-    USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "유저가 존재하지 않습니다.");
+    USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "유저가 존재하지 않습니다."),
 
     // Task 관련 ErrorCode
 
@@ -28,6 +28,10 @@ public enum ErrorCode {
     // Comment 관련 ErrorCode
 
     // Activity 관련 ErrorCode
+
+    // ===== Task / User / Comment 관련 =====
+    TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "작업을 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;

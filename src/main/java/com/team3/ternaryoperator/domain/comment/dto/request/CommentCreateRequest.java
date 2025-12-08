@@ -1,0 +1,13 @@
+package com.team3.ternaryoperator.domain.comment.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+
+@Getter
+public class CommentCreateRequest {
+
+    @NotBlank(message = "댓글 내용은 필수입니다.")
+    private String content;
+
+    private Long parentId;
+}

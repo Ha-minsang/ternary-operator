@@ -1,4 +1,4 @@
-package com.team3.ternaryoperator.domain.tasks.model.dto;
+package com.team3.ternaryoperator.domain.task.model.dto;
 
 import com.team3.ternaryoperator.common.entity.Task;
 import lombok.AllArgsConstructor;

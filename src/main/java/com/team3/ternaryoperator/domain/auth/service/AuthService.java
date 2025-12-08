@@ -8,7 +8,7 @@ import com.team3.ternaryoperator.domain.auth.dto.request.LoginRequest;
 import com.team3.ternaryoperator.domain.auth.dto.request.VerifyPasswordRequest;
 import com.team3.ternaryoperator.domain.auth.dto.response.LoginResponse;
 import com.team3.ternaryoperator.domain.auth.dto.response.VerifyPasswordResponse;
-import com.team3.ternaryoperator.domain.users.repository.UserRepository;
+import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

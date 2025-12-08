@@ -1,6 +1,6 @@
-package com.team3.ternaryoperator.domain.tasks.model.response;
+package com.team3.ternaryoperator.domain.task.model.response;
 
-import com.team3.ternaryoperator.domain.tasks.model.dto.TaskDto;
+import com.team3.ternaryoperator.domain.task.model.dto.TaskDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
