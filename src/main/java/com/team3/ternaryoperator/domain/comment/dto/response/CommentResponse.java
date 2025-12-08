@@ -1,13 +1,14 @@
 package com.team3.ternaryoperator.domain.comment.dto.response;
 
 import com.team3.ternaryoperator.common.entity.Comment;
-import lombok.Builder;
+import com.team3.ternaryoperator.common.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class CommentResponse {
 
     private final Long id;
@@ -20,29 +21,31 @@ public class CommentResponse {
     private final LocalDateTime updatedAt;
 
     @Getter
-    @Builder
+    @AllArgsConstructor
     public static class UserInfo {
-        private Long id;
-        private String username;
-        private String name;
+        private final Long id;
+        private final String username;
+        private final String name;
+
+        public static UserInfo from(User user) {
+            return new UserInfo(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getName()
+            );
+        }
     }
 
     public static CommentResponse from(Comment comment) {
-        return CommentResponse.builder()
-                .id(comment.getId())
-                .taskId(comment.getTask().getId())
-                .userId(comment.getUser().getId())
-                .user(
-                        UserInfo.builder()
-                                .id(comment.getUser().getId())
-                                .username(comment.getUser().getUsername())
-                                .name(comment.getUser().getName())
-                                .build()
-                )
-                .content(comment.getContent())
-                .parentId(comment.getParentComment() != null ? comment.getParentComment().getId() : null)
-                .createdAt(comment.getCreatedAt())
-                .updatedAt(comment.getModifiedAt())
-                .build();
+        return new CommentResponse(
+                comment.getId(),
+                comment.getTask().getId(),
+                comment.getUser().getId(),
+                UserInfo.from(comment.getUser()),
+                comment.getContent(),
+                comment.getParentComment() != null ? comment.getParentComment().getId() : null,
+                comment.getCreatedAt(),
+                comment.getModifiedAt()
+        );
     }
 }
