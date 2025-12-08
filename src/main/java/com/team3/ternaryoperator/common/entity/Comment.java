@@ -41,8 +41,4 @@ public class Comment extends BaseEntity {
     public void update(String content) {
         this.content = content;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 }
