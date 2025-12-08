@@ -27,7 +27,7 @@ public class Comment extends BaseEntity {
     private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "parent_id", nullable = false)
+    @JoinColumn(name = "parent_id")
     private Comment parentComment;
 
     public Comment(String content, User user, Task task, Comment parentComment) {
