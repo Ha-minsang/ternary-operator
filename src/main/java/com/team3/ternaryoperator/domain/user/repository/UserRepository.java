@@ -1,4 +1,4 @@
-package com.team3.ternaryoperator.domain.users.repository;
+package com.team3.ternaryoperator.domain.user.repository;
 
 import com.team3.ternaryoperator.common.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

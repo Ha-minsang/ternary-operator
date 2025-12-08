@@ -15,4 +15,30 @@ public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "task_id", nullable = false)
+    private Task task;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "parent_id")
+    private Comment parentComment;
+
+    public Comment(String content, User user, Task task, Comment parentComment) {
+        this.content = content;
+        this.user = user;
+        this.task = task;
+        this.parentComment = parentComment;
+    }
+
+    public void update(String content) {
+        this.content = content;
+    }
 }

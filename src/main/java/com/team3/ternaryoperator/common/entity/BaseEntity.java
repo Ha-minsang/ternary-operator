@@ -20,7 +20,7 @@ public abstract class BaseEntity {
     private LocalDateTime createdAt;    //생성일
 
     @LastModifiedDate
-    private LocalDateTime modifiedAt;   //수정일
+    private LocalDateTime updatedAt;   //수정일
 
     private LocalDateTime deletedAt;
 

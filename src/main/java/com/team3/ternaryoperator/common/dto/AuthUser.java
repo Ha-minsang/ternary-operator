@@ -1,6 +1,6 @@
 package com.team3.ternaryoperator.common.dto;
 
-import com.team3.ternaryoperator.domain.users.enums.UserRole;
+import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

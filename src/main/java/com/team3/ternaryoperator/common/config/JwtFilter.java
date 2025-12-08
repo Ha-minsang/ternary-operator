@@ -2,7 +2,7 @@ package com.team3.ternaryoperator.common.config;
 
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.util.JwtUtil;
-import com.team3.ternaryoperator.domain.users.enums.UserRole;
+import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
