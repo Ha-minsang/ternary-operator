@@ -21,6 +21,14 @@ public enum ErrorCode {
     // User 관련 ErrorCode
     USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "유저가 존재하지 않습니다.");
 
+    // Task 관련 ErrorCode
+
+    // Team 관련 ErrorCode
+
+    // Comment 관련 ErrorCode
+
+    // Activity 관련 ErrorCode
+
     private final HttpStatus status;
     private final String message;
 }
