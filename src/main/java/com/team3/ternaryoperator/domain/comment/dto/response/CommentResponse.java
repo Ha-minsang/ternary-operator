@@ -45,7 +45,7 @@ public class CommentResponse {
                 comment.getContent(),
                 comment.getParentComment() != null ? comment.getParentComment().getId() : null,
                 comment.getCreatedAt(),
-                comment.getModifiedAt()
+                comment.getUpdatedAt()
         );
     }
 }
