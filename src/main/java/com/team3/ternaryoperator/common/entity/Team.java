@@ -1,6 +1,5 @@
 package com.team3.ternaryoperator.common.entity;
 
-import com.team3.ternaryoperator.domain.users.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
