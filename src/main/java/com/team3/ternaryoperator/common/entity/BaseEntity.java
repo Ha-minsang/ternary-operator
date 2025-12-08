@@ -1,4 +1,4 @@
-package com.team3.ternaryoperator.common.emtity;
+package com.team3.ternaryoperator.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
