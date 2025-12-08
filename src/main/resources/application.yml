@@ -2,6 +2,13 @@ spring:
   application:
     name: ternary-operator
 
+    # database
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/TaskFlow
+    username: root
+    password: 12345678
+
 #jpa
   jpa:
     hibernate:
@@ -17,4 +24,4 @@ jwt:
   secret:
     key: aognijodsbnmlzxvcmnonaowngfonasonvlscamnklvasdfaweahbnfgjfggzsgffsbxvbdsg
 
-  access-token-expiration: 60 * 60 * 1000
+  access-token-expiration: 3600000
