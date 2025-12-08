@@ -2,6 +2,7 @@ spring:
   application:
     name: ternary-operator
 
+#jpa
   jpa:
     hibernate:
       ddl-auto: create
@@ -10,3 +11,10 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
     show-sql: true
+
+#jwt
+jwt:
+  secret:
+    key: aognijodsbnmlzxvcmnonaowngfonasonvlscamnklvasdfaweahbnfgjfggzsgffsbxvbdsg
+
+  access-token-expiration: 60 * 60 * 1000
