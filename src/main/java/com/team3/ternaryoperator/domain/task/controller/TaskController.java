@@ -24,7 +24,7 @@ public class TaskController {
             @AuthenticationPrincipal AuthUser authUser,
             @Valid @RequestBody TaskCreateRequest request
     ) {
-        TaskCreateResponse response =  taskService.createTask(authUser.getId(), request);;
+        TaskCreateResponse response =  taskService.createTask(authUser.getId(), request);
         return ResponseEntity.ok(CommonResponse.success(response, "작업이 생성되었습니다."));
     }
 
