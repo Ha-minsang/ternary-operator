@@ -7,9 +7,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-
     // Auth(인증,권한) 관련 ErrorCode
-    AUTH_INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 올바르지 않습니다."),
     NOT_LOGGED_IN(HttpStatus.UNAUTHORIZED, "로그인이 되어 있지 않습니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 작업을 수행할 권한이 없습니다."),
     ALREADY_LOGGED_IN(HttpStatus.CONFLICT, "이미 로그인이 되어 있습니다."),
@@ -17,6 +16,18 @@ public enum ErrorCode {
     INVALID_TOKEN (HttpStatus.UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다."),
 
     // Common 공통 ErrorCode
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "요청 값이 올바르지 않습니다: "),
+
+    // User 관련 ErrorCode
+    USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "유저가 존재하지 않습니다.");
+
+    // Task 관련 ErrorCode
+
+    // Team 관련 ErrorCode
+
+    // Comment 관련 ErrorCode
+
+    // Activity 관련 ErrorCode
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "요청 값이 올바르지 않습니다: "),
 
     // ===== Task / User / Comment 관련 =====

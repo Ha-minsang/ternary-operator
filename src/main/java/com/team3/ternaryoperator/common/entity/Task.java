@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "users")
+@Table(name = "tasks")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Task extends BaseEntity {
 

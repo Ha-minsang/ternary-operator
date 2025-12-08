@@ -1,14 +1,15 @@
 package com.team3.ternaryoperator.common.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
-@Getter
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "comments")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction("deleted_at IS NULL")
 public class Comment extends BaseEntity {
 
     @Id
@@ -40,4 +41,8 @@ public class Comment extends BaseEntity {
     public void update(String content) {
         this.content = content;
     }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 }
