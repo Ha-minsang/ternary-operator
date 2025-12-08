@@ -1,5 +1,6 @@
 package com.team3.ternaryoperator.common.util;
 
+import com.team3.ternaryoperator.domain.users.enums.UserRole;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
@@ -23,6 +24,8 @@ import java.util.Date;
 public class JwtUtil {
 
     private static final String BEARER_PREFIX = "Bearer ";
+    private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_ROLE = "role";
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -39,12 +42,14 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // 액세스 토큰 생성
-    public String createAccessToken() {
+    public String createAccessToken(Long userId, String email, UserRole role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + accessTokenExpiration);
 
         return Jwts.builder()
+                .setSubject(String.valueOf(userId))
+                .claim(CLAIM_EMAIL, email)
+                .claim(CLAIM_ROLE, role.name())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, signatureAlgorithm)
@@ -63,7 +68,6 @@ public class JwtUtil {
         return authorizationHeader.substring(BEARER_PREFIX.length());
     }
 
-    // 토큰 유효성 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -80,12 +84,27 @@ public class JwtUtil {
         }
     }
 
-    private Claims getClaims(String token) {
+    public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
-}
 
+    public Long getUserId(String token) {
+        Claims claims = getClaims(token);
+        return Long.parseLong(claims.getSubject());
+    }
+
+    public String getEmail(String token) {
+        Claims claims = getClaims(token);
+        return claims.get(CLAIM_EMAIL, String.class);
+    }
+
+    public UserRole getUserRole(String token) {
+        Claims claims = getClaims(token);
+        String roleName = claims.get(CLAIM_ROLE, String.class);
+        return UserRole.valueOf(roleName);
+    }
+}
