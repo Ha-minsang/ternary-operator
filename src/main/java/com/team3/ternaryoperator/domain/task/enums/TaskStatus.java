@@ -1,4 +1,4 @@
-package com.team3.ternaryoperator.domain.tasks.enums;
+package com.team3.ternaryoperator.domain.task.enums;
 
 import lombok.NoArgsConstructor;
 

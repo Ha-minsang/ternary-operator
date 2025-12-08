@@ -1,10 +1,10 @@
-package com.team3.ternaryoperator.domain.tasks.controller;
+package com.team3.ternaryoperator.domain.task.controller;
 
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.CommonResponse;
-import com.team3.ternaryoperator.domain.tasks.model.request.TaskCreateRequest;
-import com.team3.ternaryoperator.domain.tasks.model.response.TaskCreateResponse;
-import com.team3.ternaryoperator.domain.tasks.service.TaskService;
+import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
+import com.team3.ternaryoperator.domain.task.model.response.TaskCreateResponse;
+import com.team3.ternaryoperator.domain.task.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

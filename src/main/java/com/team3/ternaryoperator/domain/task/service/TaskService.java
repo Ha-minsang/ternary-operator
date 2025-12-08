@@ -1,15 +1,15 @@
-package com.team3.ternaryoperator.domain.tasks.service;
+package com.team3.ternaryoperator.domain.task.service;
 
 
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
-import com.team3.ternaryoperator.domain.tasks.enums.TaskPriority;
-import com.team3.ternaryoperator.domain.tasks.enums.TaskStatus;
-import com.team3.ternaryoperator.domain.tasks.model.dto.TaskDto;
-import com.team3.ternaryoperator.domain.tasks.model.request.TaskCreateRequest;
-import com.team3.ternaryoperator.domain.tasks.model.response.TaskCreateResponse;
-import com.team3.ternaryoperator.domain.tasks.repository.TaskRepository;
+import com.team3.ternaryoperator.domain.task.enums.TaskPriority;
+import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
+import com.team3.ternaryoperator.domain.task.model.dto.TaskDto;
+import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
+import com.team3.ternaryoperator.domain.task.model.response.TaskCreateResponse;
+import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
