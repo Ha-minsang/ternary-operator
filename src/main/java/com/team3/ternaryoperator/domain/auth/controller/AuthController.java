@@ -27,7 +27,7 @@ public class AuthController {
             @RequestBody LoginRequest request
     ) {
         LoginResponse response = authService.login(request);
-        return ResponseEntity.ok(CommonResponse.success(response));
+        return ResponseEntity.ok(CommonResponse.success(response, "로그인 성공."));
     }
 
     @PostMapping("/verify-password")
@@ -35,7 +35,7 @@ public class AuthController {
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody VerifyPasswordRequest request
     ) {
-        VerifyPasswordResponse response =  authService.checkPassword(authUser.getId(), request);
-        return ResponseEntity.ok(CommonResponse.success(response));
+        VerifyPasswordResponse response = authService.checkPassword(authUser.getId(), request);
+        return ResponseEntity.ok(CommonResponse.success(response, "비밀번호가 확인되었습니다."));
     }
 }
