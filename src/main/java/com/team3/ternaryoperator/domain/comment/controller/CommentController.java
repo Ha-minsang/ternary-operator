@@ -28,6 +28,6 @@ public class CommentController {
 
         CommentResponse response = commentService.createComment(taskId, userId, request);
 
-        return ResponseEntity.status(201).body(CommonResponse.success(response));
+        return ResponseEntity.ok(CommonResponse.success(response, "댓글이 작성되었습니다."));
     }
 }
