@@ -1,7 +1,6 @@
 package com.team3.ternaryoperator.common.exception;
 
 import com.team3.ternaryoperator.common.dto.CommonResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,23 +13,14 @@ public class GlobalExceptionHandler {
 
     // 커스텀 예외 처리
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<CommonResponse<Void>> handleException(CustomException e, HttpServletRequest request) {
+    public ResponseEntity<CommonResponse<Void>> handleException(CustomException e) {
         log.error("예외 발생. ", e);
-        CommonResponse<Void> response = CommonResponse.fail(
-                e.getErrorCode(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity
-                .status(e.getErrorCode().getStatus())
-                .body(response);
+        CommonResponse<Void> response = CommonResponse.fail(e.getErrorCode());
+        return ResponseEntity.status(e.getErrorCode().getStatus()).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<CommonResponse<Void>> handleMethodArgumentNotValidException(
-            MethodArgumentNotValidException e,
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<CommonResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("예외 발생. ", e);
 
         // FieldError 메시지 추출
@@ -41,15 +31,8 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
         String finalMessage = errorCode.getMessage() + detailMessage;
 
-        CommonResponse<Void> body = CommonResponse.fail(
-                errorCode,
-                finalMessage,
-                request.getRequestURI()
-        );
-
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(body);
+        CommonResponse<Void> response = CommonResponse.fail(errorCode, finalMessage);
+        return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
 
 }
