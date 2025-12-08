@@ -13,7 +13,7 @@ public class CommonResponse<T> {
     private final LocalDateTime timestamp; // 실행 시간
     private final T data;                  // 성공 시 data , 실패시 null
 
-    private CommonResponse(boolean success, String message, T data, LocalDateTime timestamp ) {
+    private CommonResponse(boolean success, String message, T data, LocalDateTime timestamp) {
         this.success = success;
         this.message = message;
         this.data = data;
@@ -21,13 +21,13 @@ public class CommonResponse<T> {
     }
 
     // 성공시 공용 응답 객체
-    public static <T> CommonResponse<T> success(T data) {
-        return new CommonResponse<>(true, "요청이 성공했습니다.", data, LocalDateTime.now());
+    public static <T> CommonResponse<T> success(T data, String message) {
+        return new CommonResponse<>(true, message, data, LocalDateTime.now());
     }
 
     // 실패시 공용 응답 객체
     public static <T> CommonResponse<T> fail(ErrorCode errorCode) {
-        return new CommonResponse<>(false, errorCode.getMessage(),null, LocalDateTime.now());
+        return new CommonResponse<>(false, errorCode.getMessage(), null, LocalDateTime.now());
     }
 
     // 메세지를 직접 입력하는 경우
