@@ -1,6 +1,6 @@
 package com.team3.ternaryoperator.common.util;
 
-import com.team3.ternaryoperator.domain.users.enums.UserRole;
+import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import io.jsonwebtoken.Claims;

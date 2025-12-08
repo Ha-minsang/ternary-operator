@@ -10,7 +10,7 @@ import com.team3.ternaryoperator.domain.tasks.model.dto.TaskDto;
 import com.team3.ternaryoperator.domain.tasks.model.request.TaskCreateRequest;
 import com.team3.ternaryoperator.domain.tasks.model.response.TaskCreateResponse;
 import com.team3.ternaryoperator.domain.tasks.repository.TaskRepository;
-import com.team3.ternaryoperator.domain.users.repository.UserRepository;
+import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
