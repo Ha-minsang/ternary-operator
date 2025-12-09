@@ -4,7 +4,7 @@ import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.user.dto.request.UserCreateRequest;
-import com.team3.ternaryoperator.domain.user.dto.response.UserCreateResponse;
+import com.team3.ternaryoperator.domain.user.dto.response.UserResponse;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserCreateResponse signUp(UserCreateRequest request) {
+    public UserResponse signUp(UserCreateRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new CustomException(ErrorCode.DUPLICATE_USERNAME);
@@ -43,6 +43,6 @@ public class UserService {
 
         User saved = userRepository.save(user);
 
-        return UserCreateResponse.from(saved);
+        return UserResponse.from(saved);
     }
 }

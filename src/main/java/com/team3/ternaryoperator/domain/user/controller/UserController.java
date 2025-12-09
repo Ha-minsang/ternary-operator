@@ -2,7 +2,7 @@ package com.team3.ternaryoperator.domain.user.controller;
 
 import com.team3.ternaryoperator.common.dto.CommonResponse;
 import com.team3.ternaryoperator.domain.user.dto.request.UserCreateRequest;
-import com.team3.ternaryoperator.domain.user.dto.response.UserCreateResponse;
+import com.team3.ternaryoperator.domain.user.dto.response.UserResponse;
 import com.team3.ternaryoperator.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +21,10 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<CommonResponse<UserCreateResponse>> signUp(
+    public ResponseEntity<CommonResponse<UserResponse>> signUp(
             @Valid @RequestBody UserCreateRequest request
     ) {
-        UserCreateResponse response = userService.signUp(request);
+        UserResponse response = userService.signUp(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(CommonResponse.success(response, "회원가입이 완료되었습니다."));
