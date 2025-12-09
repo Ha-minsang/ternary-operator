@@ -18,7 +18,7 @@ public class TaskDto {
     private String description;
     private String status;
     private String priority;
-    private Long assignee;
+    private User assignee;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime dueDate;
@@ -30,7 +30,7 @@ public class TaskDto {
                 task.getDescription(),
                 task.getStatus().getTaskStatus(),
                 task.getPriority().getTaskPriority(),
-                task.getAssignee().getId(),
+                task.getAssignee(),
                 task.getCreatedAt(),
                 task.getUpdatedAt(),
                 task.getDueDate()

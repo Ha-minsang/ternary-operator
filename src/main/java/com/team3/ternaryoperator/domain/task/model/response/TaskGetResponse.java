@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class TaskResponse {
+public class TaskGetResponse {
 
     private final Long id;
     private final String title;
@@ -16,18 +16,20 @@ public class TaskResponse {
     private final String status;
     private final String priority;
     private final Long assigneeId;
+    private final AssigneeResponse assignee;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
     private final LocalDateTime dueDate;
 
-    public static TaskResponse from(TaskDto dto) {
-        return new TaskResponse(
+    public static TaskGetResponse from(TaskDto dto, AssigneeResponse assignee) {
+        return new TaskGetResponse(
                 dto.getId(),
                 dto.getTitle(),
                 dto.getDescription(),
                 dto.getStatus(),
                 dto.getPriority(),
                 dto.getAssignee().getId(),
+                assignee,
                 dto.getCreatedAt(),
                 dto.getUpdatedAt(),
                 dto.getDueDate()
