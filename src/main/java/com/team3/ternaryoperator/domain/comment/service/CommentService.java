@@ -1,5 +1,6 @@
 package com.team3.ternaryoperator.domain.comment.service;
 
+import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.Comment;
 import com.team3.ternaryoperator.common.entity.Task;
@@ -15,6 +16,7 @@ import com.team3.ternaryoperator.domain.comment.model.response.CommentResponse;
 import com.team3.ternaryoperator.domain.comment.model.response.CommentUpdateResponse;
 import com.team3.ternaryoperator.domain.comment.repository.CommentRepository;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
+import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -103,5 +105,21 @@ public class CommentService {
         CommentDto dto = CommentDto.from(comment);
 
         return CommentUpdateResponse.from(dto);
+    }
+
+    @Transactional
+    public void deleteComment(Long taskId, Long commentId, AuthUser authUser) {
+
+        // 댓글 조회 (deleted_at != null 자동 필터링)
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        // 작성자 or ADMIN 권한 체크
+        if (!comment.getUser().getId().equals(authUser.getId())
+                && authUser.getRole() != UserRole.ADMIN) {
+            throw new CustomException(ErrorCode.COMMENT_NOT_DELETE_AUTHORIZATION);
+        }
+
+        comment.softDelete();
     }
 }

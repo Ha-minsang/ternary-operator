@@ -61,4 +61,16 @@ public class CommentController {
 
         return ResponseEntity.ok(CommonResponse.success(response, "댓글이 수정되었습니다."));
     }
+
+    @DeleteMapping("/{taskId}/comments/{commentId}")
+    public ResponseEntity<CommonResponse<Void>> deleteComment(
+            @PathVariable Long taskId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+
+        commentService.deleteComment(taskId, commentId, authUser);
+
+        return ResponseEntity.ok(CommonResponse.success(null, "댓글이 삭제되었습니다."));
+    }
 }
