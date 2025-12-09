@@ -4,6 +4,7 @@ import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.user.dto.request.UserCreateRequest;
+import com.team3.ternaryoperator.domain.user.dto.response.UserGetResponse;
 import com.team3.ternaryoperator.domain.user.dto.response.UserResponse;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
@@ -44,5 +45,11 @@ public class UserService {
         User saved = userRepository.save(user);
 
         return UserResponse.from(saved);
+    }
+
+    public UserGetResponse getMyInfo(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        return UserGetResponse.from(user);
     }
 }
