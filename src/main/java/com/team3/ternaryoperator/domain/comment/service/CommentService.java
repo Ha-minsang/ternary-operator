@@ -9,8 +9,10 @@ import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.comment.model.dto.CommentDto;
 import com.team3.ternaryoperator.domain.comment.model.dto.CommentGetDto;
 import com.team3.ternaryoperator.domain.comment.model.request.CommentCreateRequest;
+import com.team3.ternaryoperator.domain.comment.model.request.CommentUpdateRequest;
 import com.team3.ternaryoperator.domain.comment.model.response.CommentGetResponse;
 import com.team3.ternaryoperator.domain.comment.model.response.CommentResponse;
+import com.team3.ternaryoperator.domain.comment.model.response.CommentUpdateResponse;
 import com.team3.ternaryoperator.domain.comment.repository.CommentRepository;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
@@ -34,22 +36,18 @@ public class CommentService {
     @Transactional
     public CommentResponse createComment(Long taskId, Long userId, CommentCreateRequest request) {
 
-        // 1. Task 존재 확인
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
 
-        // 2. User 가져오기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 3. 부모 댓글 있는 경우 검증
         Comment parent = null;
         if (request.getParentId() != null) {
             parent = commentRepository.findById(request.getParentId())
                     .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         }
 
-        // 4. 댓글 생성
         Comment comment = new Comment(
                 request.getContent(),
                 user,
@@ -84,5 +82,26 @@ public class CommentService {
                 .map(comment -> CommentGetResponse.from(CommentGetDto.from(comment)));
 
         return PageResponse.from(mapped);
+    }
+
+    @Transactional
+    public CommentUpdateResponse updateComment(Long taskId, Long commentId, Long userId, CommentUpdateRequest request) {
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        if (!comment.getTask().getId().equals(taskId)) {
+            throw new CustomException(ErrorCode.COMMENT_NOT_EXIST);
+        }
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.COMMENT_FORBIDDEN_ONLY_USER);
+        }
+
+        comment.update(request.getContent());
+
+        CommentDto dto = CommentDto.from(comment);
+
+        return CommentUpdateResponse.from(dto);
     }
 }
