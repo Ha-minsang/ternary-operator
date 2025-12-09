@@ -34,4 +34,12 @@ public class TeamController {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 목록 조회 성공"));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponse<TeamResponse>> getOneTeamApi(@PathVariable Long id) {
+
+        TeamResponse response = teamService.getOneTeam(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 조회 성공"));
+    }
 }

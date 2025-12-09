@@ -2,6 +2,7 @@ package com.team3.ternaryoperator.domain.team.service;
 
 import com.team3.ternaryoperator.common.entity.Team;
 import com.team3.ternaryoperator.common.exception.CustomException;
+import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.team.model.dto.MemberDto;
 import com.team3.ternaryoperator.domain.team.model.dto.TeamDto;
 import com.team3.ternaryoperator.domain.team.model.request.TeamCreateRequest;
@@ -52,6 +53,15 @@ public class TeamService {
                 .toList();
         }
 
+    @Transactional(readOnly = true)
+    public TeamResponse getOneTeam(Long id) {
+
+       Team foundTeam = teamRepository.findById(id)
+               .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+
+       return toTeamResponse(foundTeam);
+    }
+
     // 헬퍼 메서드
     private TeamResponse toTeamResponse(Team team) {
         List<MemberDto> members = userRepository.findByTeamId(team.getId())
@@ -61,4 +71,6 @@ public class TeamService {
 
         return TeamResponse.from(TeamDto.from(team), members);
     }
+
+
 }
