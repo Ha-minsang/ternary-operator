@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
-public class TeamCreateRequest {
+public class TeamRequest {
 
     @NotBlank(message = "팀 이름은 필수입니다.")
     @Size(max = 30)

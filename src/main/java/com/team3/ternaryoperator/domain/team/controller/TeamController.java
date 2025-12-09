@@ -1,13 +1,15 @@
 package com.team3.ternaryoperator.domain.team.controller;
 
+import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.CommonResponse;
-import com.team3.ternaryoperator.domain.team.model.request.TeamCreateRequest;
+import com.team3.ternaryoperator.domain.team.model.request.TeamRequest;
 import com.team3.ternaryoperator.domain.team.model.response.TeamResponse;
 import com.team3.ternaryoperator.domain.team.service.TeamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,9 +22,9 @@ public class TeamController {
     private final TeamService teamService;
 
     @PostMapping
-    public ResponseEntity<CommonResponse<TeamResponse>> createTeamApi(@Valid @RequestBody TeamCreateRequest request) {
+    public ResponseEntity<CommonResponse<TeamResponse>> createTeamApi(@AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody TeamRequest request) {
 
-        TeamResponse response = teamService.createTeam(request);
+        TeamResponse response = teamService.createTeam(authUser, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.success(response, "팀이 생성되었습니다."));
     }
