@@ -3,8 +3,9 @@ package com.team3.ternaryoperator.domain.comment.controller;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.CommonResponse;
 import com.team3.ternaryoperator.common.dto.PageResponse;
-import com.team3.ternaryoperator.domain.comment.dto.request.CommentCreateRequest;
-import com.team3.ternaryoperator.domain.comment.dto.response.CommentResponse;
+import com.team3.ternaryoperator.domain.comment.model.request.CommentCreateRequest;
+import com.team3.ternaryoperator.domain.comment.model.response.CommentGetResponse;
+import com.team3.ternaryoperator.domain.comment.model.response.CommentResponse;
 import com.team3.ternaryoperator.domain.comment.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,12 +36,12 @@ public class CommentController {
     }
 
     @GetMapping("/{taskId}/comments")
-    public ResponseEntity<CommonResponse<PageResponse<CommentResponse>>> getTaskComments(
+    public ResponseEntity<CommonResponse<PageResponse<CommentGetResponse>>> getTaskComments(
             @PathVariable Long taskId,
             @RequestParam(defaultValue = "newest") String sort,
             @PageableDefault(page = 0, size = 10) Pageable pageable
             ) {
-        PageResponse<CommentResponse> response = commentService.getComments(taskId, sort, pageable);
+        PageResponse<CommentGetResponse> response = commentService.getComments(taskId, sort, pageable);
 
         return ResponseEntity.ok(CommonResponse.success(response, "댓글 목록을 조회했습니다."));
     }

@@ -6,8 +6,11 @@ import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
-import com.team3.ternaryoperator.domain.comment.dto.request.CommentCreateRequest;
-import com.team3.ternaryoperator.domain.comment.dto.response.CommentResponse;
+import com.team3.ternaryoperator.domain.comment.model.dto.CommentDto;
+import com.team3.ternaryoperator.domain.comment.model.dto.CommentGetDto;
+import com.team3.ternaryoperator.domain.comment.model.request.CommentCreateRequest;
+import com.team3.ternaryoperator.domain.comment.model.response.CommentGetResponse;
+import com.team3.ternaryoperator.domain.comment.model.response.CommentResponse;
 import com.team3.ternaryoperator.domain.comment.repository.CommentRepository;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
@@ -41,7 +44,6 @@ public class CommentService {
 
         // 3. 부모 댓글 있는 경우 검증
         Comment parent = null;
-        System.out.println(request.getParentId());
         if (request.getParentId() != null) {
             parent = commentRepository.findById(request.getParentId())
                     .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
@@ -57,10 +59,10 @@ public class CommentService {
 
         Comment saved = commentRepository.save(comment);
 
-        return CommentResponse.from(saved);
+        return CommentResponse.from(CommentDto.from(saved));
     }
 
-    public PageResponse<CommentResponse> getComments(Long taskId, String sort, Pageable pageable) {
+    public PageResponse<CommentGetResponse> getComments(Long taskId, String sort, Pageable pageable) {
 
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
@@ -78,7 +80,8 @@ public class CommentService {
         Page<Comment> comments = commentRepository.findByTask(task, finalPageable);
 
         // commentPage.map(comment -> CommentResponse.from(comment)) 과 동일하다
-        Page<CommentResponse> mapped = comments.map(CommentResponse::from);
+        Page<CommentGetResponse> mapped = comments
+                .map(comment -> CommentGetResponse.from(CommentGetDto.from(comment)));
 
         return PageResponse.from(mapped);
     }
