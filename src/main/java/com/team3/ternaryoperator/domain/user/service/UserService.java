@@ -1,14 +1,17 @@
 package com.team3.ternaryoperator.domain.user.service;
 
+import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import com.team3.ternaryoperator.domain.user.model.dto.UserDto;
 import com.team3.ternaryoperator.domain.user.model.request.UserCreateRequest;
-import com.team3.ternaryoperator.domain.user.model.response.UserGetResponse;
+import com.team3.ternaryoperator.domain.user.model.request.UserUpdateRequest;
+import com.team3.ternaryoperator.domain.user.model.response.UserDetailResponse;
 import com.team3.ternaryoperator.domain.user.model.response.UserResponse;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -51,11 +54,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserGetResponse getUser(Long id) {
+    public UserDetailResponse getUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         UserDto userDto = UserDto.from(user);
-        return UserGetResponse.from(userDto);
+        return UserDetailResponse.from(userDto);
     }
 
     @Transactional(readOnly = true)
@@ -68,5 +71,33 @@ public class UserService {
         return userDtoList.stream()
                 .map(UserResponse::from)
                 .toList();
+    }
+
+    @Transactional
+    public UserDetailResponse updateUser(AuthUser authUser, Long id, @Valid UserUpdateRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        if (!authUser.getId().equals(id)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+        }
+
+        if (request.getName() != null) {
+            user.updateName(request.getName());
+        }
+        if (request.getEmail() != null) {
+            user.updateEmail(request.getEmail());
+        }
+
+        userRepository.flush();
+        UserDto userDto = UserDto.from(user);
+        return UserDetailResponse.from(userDto);
     }
 }
