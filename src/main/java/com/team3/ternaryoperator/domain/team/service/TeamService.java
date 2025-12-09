@@ -39,14 +39,7 @@ public class TeamService {
         Team newTeam = new Team(name, description);
         Team savedTeam = teamRepository.save(newTeam);
 
-        List<MemberDto> members = userRepository.findByTeamId(savedTeam.getId())
-                .stream()
-                .map(MemberDto::from)
-                .toList();
-
-        TeamDto dto = TeamDto.from(savedTeam);
-
-        return TeamResponse.from(dto, members);
+        return toTeamResponse(savedTeam);
     }
 
     @Transactional(readOnly = true)
@@ -55,15 +48,17 @@ public class TeamService {
         List<Team> teams = teamRepository.findAllByDeletedAtIsNull();
 
         return teams.stream()
-                .map(team -> {
-                    List<MemberDto> members = userRepository.findByTeamId(team.getId())
-                            .stream()
-                            .map(MemberDto::from)
-                            .toList();
-
-                    TeamDto dto = TeamDto.from(team);
-                    return TeamResponse.from(dto, members);
-                })
+                .map(this::toTeamResponse)
                 .toList();
         }
+
+    // 헬퍼 메서드
+    private TeamResponse toTeamResponse(Team team) {
+        List<MemberDto> members = userRepository.findByTeamId(team.getId())
+                .stream()
+                .map(MemberDto::from)
+                .toList();
+
+        return TeamResponse.from(TeamDto.from(team), members);
+    }
 }
