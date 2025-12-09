@@ -49,4 +49,16 @@ public class User extends BaseEntity {
     public void changeTeam(Team team) {
         this.team = team;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }
