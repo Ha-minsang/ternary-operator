@@ -1,4 +1,4 @@
-package com.team3.ternaryoperator.domain.comment.dto.request;
+package com.team3.ternaryoperator.domain.comment.model.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
