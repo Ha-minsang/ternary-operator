@@ -1,5 +1,6 @@
 package com.team3.ternaryoperator.domain.comment.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.team3.ternaryoperator.common.entity.Comment;
 import com.team3.ternaryoperator.common.entity.User;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,11 @@ public class CommentResponse {
     private final Long userId;
     private final UserInfo user;
     private final String content;
+
+    // parentId가 없으면 필드 자체 제거
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Long parentId;
+
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
