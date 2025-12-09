@@ -5,7 +5,7 @@ import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.domain.team.model.dto.MemberDto;
 import com.team3.ternaryoperator.domain.team.model.dto.TeamDto;
 import com.team3.ternaryoperator.domain.team.model.request.TeamCreateRequest;
-import com.team3.ternaryoperator.domain.team.model.response.TeamCreateResponse;
+import com.team3.ternaryoperator.domain.team.model.response.TeamResponse;
 import com.team3.ternaryoperator.domain.team.repository.TeamRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class TeamService {
     private final UserRepository userRepository;
 
     @Transactional
-    public TeamCreateResponse createTeam(TeamCreateRequest request) {
+    public TeamResponse createTeam(TeamCreateRequest request) {
 
         // user_not_found 검사는 하지 않음(보안 레이어에서 보장)
 
@@ -46,6 +46,24 @@ public class TeamService {
 
         TeamDto dto = TeamDto.from(savedTeam);
 
-        return TeamCreateResponse.from(dto, members);
+        return TeamResponse.from(dto, members);
     }
+
+    @Transactional(readOnly = true)
+    public List<TeamResponse> getAllTeam() {
+
+        List<Team> teams = teamRepository.findAllByDeletedAtIsNull();
+
+        return teams.stream()
+                .map(team -> {
+                    List<MemberDto> members = userRepository.findByTeamId(team.getId())
+                            .stream()
+                            .map(MemberDto::from)
+                            .toList();
+
+                    TeamDto dto = TeamDto.from(team);
+                    return TeamResponse.from(dto, members);
+                })
+                .toList();
+        }
 }
