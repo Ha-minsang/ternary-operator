@@ -4,8 +4,10 @@ import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.CommonResponse;
 import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.domain.comment.model.request.CommentCreateRequest;
+import com.team3.ternaryoperator.domain.comment.model.request.CommentUpdateRequest;
 import com.team3.ternaryoperator.domain.comment.model.response.CommentGetResponse;
 import com.team3.ternaryoperator.domain.comment.model.response.CommentResponse;
+import com.team3.ternaryoperator.domain.comment.model.response.CommentUpdateResponse;
 import com.team3.ternaryoperator.domain.comment.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +46,19 @@ public class CommentController {
         PageResponse<CommentGetResponse> response = commentService.getComments(taskId, sort, pageable);
 
         return ResponseEntity.ok(CommonResponse.success(response, "댓글 목록을 조회했습니다."));
+    }
+
+    @PutMapping("/{taskId}/comments/{commentId}")
+    public ResponseEntity<CommonResponse<CommentUpdateResponse>> updateComment(
+            @PathVariable Long taskId,
+            @PathVariable Long commentId,
+            @RequestBody CommentUpdateRequest request,
+            @AuthenticationPrincipal AuthUser authUser
+            ) {
+
+        Long userId = authUser.getId();
+        CommentUpdateResponse response = commentService.updateComment(taskId, commentId, userId, request);
+
+        return ResponseEntity.ok(CommonResponse.success(response, "댓글이 수정되었습니다."));
     }
 }
