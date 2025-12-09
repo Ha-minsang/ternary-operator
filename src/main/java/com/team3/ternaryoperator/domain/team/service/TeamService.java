@@ -1,6 +1,7 @@
 package com.team3.ternaryoperator.domain.team.service;
 
 import com.team3.ternaryoperator.common.entity.Team;
+import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.team.model.dto.MemberDto;
@@ -51,21 +52,21 @@ public class TeamService {
         return teams.stream()
                 .map(this::toTeamResponse)
                 .toList();
-        }
+    }
 
     @Transactional(readOnly = true)
     public TeamResponse getOneTeam(Long id) {
 
-       Team foundTeam = teamRepository.findById(id)
-               .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+        Team foundTeam = teamRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
 
-       return toTeamResponse(foundTeam);
+        return toTeamResponse(foundTeam);
     }
 
     // 헬퍼 메서드
     private TeamResponse toTeamResponse(Team team) {
-        List<MemberDto> members = userRepository.findByTeamId(team.getId())
-                .stream()
+        List<User> users = userRepository.findByTeamId(team.getId());
+        List<MemberDto> members = users.stream()
                 .map(MemberDto::from)
                 .toList();
 
