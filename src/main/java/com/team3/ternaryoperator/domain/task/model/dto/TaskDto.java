@@ -1,6 +1,7 @@
 package com.team3.ternaryoperator.domain.task.model.dto;
 
 import com.team3.ternaryoperator.common.entity.Task;
+import com.team3.ternaryoperator.common.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
