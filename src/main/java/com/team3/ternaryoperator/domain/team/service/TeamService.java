@@ -55,15 +55,17 @@ public class TeamService {
         List<Team> teams = teamRepository.findAllByDeletedAtIsNull();
 
         return teams.stream()
-                .map(team -> {
-                    List<MemberDto> members = userRepository.findByTeamId(team.getId())
-                            .stream()
-                            .map(MemberDto::from)
-                            .toList();
-
-                    TeamDto dto = TeamDto.from(team);
-                    return TeamResponse.from(dto, members);
-                })
+                .map(this::toTeamResponse)
                 .toList();
         }
+
+    // 헬퍼 메서드
+    private TeamResponse toTeamResponse(Team team) {
+        List<MemberDto> members = userRepository.findByTeamId(team.getId())
+                .stream()
+                .map(MemberDto::from)
+                .toList();
+
+        return TeamResponse.from(TeamDto.from(team), members);
+    }
 }
