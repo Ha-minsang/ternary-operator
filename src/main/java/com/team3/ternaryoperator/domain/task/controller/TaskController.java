@@ -78,4 +78,15 @@ public class TaskController {
                 .body(CommonResponse.success(response, "작업 목록 조회 성공"));
     }
 
+    // 작업 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CommonResponse<Void>> deleteTask(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long id
+    ) {
+        taskService.deleteTask(authUser, id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success(null, "작업이 삭제되었습니다."));
+    }
 }
