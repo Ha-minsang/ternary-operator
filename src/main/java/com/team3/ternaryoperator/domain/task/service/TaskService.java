@@ -9,6 +9,8 @@ import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
 import com.team3.ternaryoperator.domain.task.model.dto.TaskDto;
 import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
 import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
+import com.team3.ternaryoperator.domain.task.model.response.AssigneeResponse;
+import com.team3.ternaryoperator.domain.task.model.response.TaskDetailResponse;
 import com.team3.ternaryoperator.domain.task.model.response.TaskResponse;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
@@ -28,10 +30,7 @@ public class TaskService {
     // 작업 생성
     @Transactional
     public TaskResponse createTask(Long id, TaskCreateRequest request) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new CustomException(USER_NOT_FOUND)
-        );
-
+        User user = getUserByIdOrThrow(id);
         TaskPriority taskPriority = TaskPriority.valueOf(request.getPriority());
         Task task = taskRepository.save(new Task(request.getTitle(), request.getDescription(), TaskStatus.TODO, taskPriority, user, request.getDueDate()));
         TaskDto dto = TaskDto.from(task);
@@ -41,10 +40,8 @@ public class TaskService {
     // 작업 수정
     @Transactional
     public TaskResponse updateTask(Long userId, Long taskId, TaskUpdateRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomException(USER_NOT_FOUND)
-        );
-        Task task = taskRepository.findTaskById(taskId);
+        User user = getUserByIdOrThrow(userId);
+        Task task = getTaskByIdOrThrow(taskId);
         matchedAssignee(user.getId(), task.getAssignee().getId());
         task.update(request);
         taskRepository.save(task);
@@ -52,8 +49,30 @@ public class TaskService {
         return TaskResponse.from(dto);
     }
 
+    // 작업 상세 조회
+    @Transactional(readOnly = true)
+    public TaskDetailResponse getOneTask(Long id) {
+        Task task = getTaskByIdOrThrow(id);
+        User user = getUserByIdOrThrow(task.getAssignee().getId());
+        return TaskDetailResponse.from(TaskDto.from(task), AssigneeResponse.from(user));
+    }
 
-    // 작성자 일치 확인
+
+    // 유저 아이디가 일치하는 유저가 없으면 예외처리
+    private User getUserByIdOrThrow(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new CustomException(USER_NOT_FOUND)
+        );
+    }
+
+    // 작업 아이디가 일치하는 작업이 없으면 예외처리
+    private Task getTaskByIdOrThrow(Long id) {
+        return taskRepository.findById(id).orElseThrow(
+                () -> new CustomException(TASK_NOT_FOUND)
+        );
+    }
+
+    // 담당자 일치 확인
     private void matchedAssignee(Long assigneeId, Long taskUserId) {
         if(!assigneeId.equals(taskUserId)) {
             throw new CustomException(TASK_FORBIDDEN_ONLY_ASSIGNEE);
