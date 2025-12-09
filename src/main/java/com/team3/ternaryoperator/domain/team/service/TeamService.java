@@ -1,13 +1,18 @@
-package com.team3.ternaryoperator.team.service;
+package com.team3.ternaryoperator.domain.team.service;
 
 import com.team3.ternaryoperator.common.entity.Team;
 import com.team3.ternaryoperator.common.exception.CustomException;
-import com.team3.ternaryoperator.team.model.request.TeamCreateRequest;
-import com.team3.ternaryoperator.team.model.response.TeamCreateResponse;
-import com.team3.ternaryoperator.team.repository.TeamRepository;
+import com.team3.ternaryoperator.domain.team.model.dto.MemberDto;
+import com.team3.ternaryoperator.domain.team.model.dto.TeamDto;
+import com.team3.ternaryoperator.domain.team.model.request.TeamCreateRequest;
+import com.team3.ternaryoperator.domain.team.model.response.TeamCreateResponse;
+import com.team3.ternaryoperator.domain.team.repository.TeamRepository;
+import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.team3.ternaryoperator.common.exception.ErrorCode.TEAM_NAME_DUPLICATED;
 
@@ -16,6 +21,7 @@ import static com.team3.ternaryoperator.common.exception.ErrorCode.TEAM_NAME_DUP
 public class TeamService {
 
     private final TeamRepository teamRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public TeamCreateResponse createTeam(TeamCreateRequest request) {
@@ -31,9 +37,15 @@ public class TeamService {
         }
 
         Team newTeam = new Team(name, description);
-
         Team savedTeam = teamRepository.save(newTeam);
 
-        return TeamCreateResponse.from(savedTeam);
+        List<MemberDto> members = userRepository.findByTeamId(savedTeam.getId())
+                .stream()
+                .map(MemberDto::from)
+                .toList();
+
+        TeamDto dto = TeamDto.from(savedTeam);
+
+        return TeamCreateResponse.from(dto, members);
     }
 }
