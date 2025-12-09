@@ -1,19 +1,12 @@
 package com.team3.ternaryoperator.common.util;
 
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
-import com.team3.ternaryoperator.common.exception.CustomException;
-import com.team3.ternaryoperator.common.exception.ErrorCode;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -22,10 +15,6 @@ import java.util.Date;
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
-
-    private static final String BEARER_PREFIX = "Bearer ";
-    private static final String CLAIM_EMAIL = "email";
-    private static final String CLAIM_ROLE = "role";
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -42,30 +31,18 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public String createAccessToken(Long userId, String email, UserRole role) {
+    public String createAccessToken(Long userId, String username, UserRole role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + accessTokenExpiration);
 
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
-                .claim(CLAIM_EMAIL, email)
-                .claim(CLAIM_ROLE, role.name())
+                .claim("username", username)
+                .claim("role", role.name())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, signatureAlgorithm)
                 .compact();
-    }
-
-    public String resolveToken(String authorizationHeader) {
-        if (!StringUtils.hasText(authorizationHeader)) {
-            throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
-        }
-
-        if (!authorizationHeader.startsWith(BEARER_PREFIX)) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
-
-        return authorizationHeader.substring(BEARER_PREFIX.length());
     }
 
     public boolean validateToken(String token) {
@@ -97,14 +74,14 @@ public class JwtUtil {
         return Long.parseLong(claims.getSubject());
     }
 
-    public String getEmail(String token) {
+    public String getUsername(String token) {
         Claims claims = getClaims(token);
-        return claims.get(CLAIM_EMAIL, String.class);
+        return claims.get("username", String.class);
     }
 
     public UserRole getUserRole(String token) {
         Claims claims = getClaims(token);
-        String roleName = claims.get(CLAIM_ROLE, String.class);
+        String roleName = claims.get("role", String.class);
         return UserRole.valueOf(roleName);
     }
 }
