@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class TaskCreateResponse {
+public class TaskResponse {
 
     private final Long id;
     private final String title;
@@ -20,8 +20,8 @@ public class TaskCreateResponse {
     private final LocalDateTime updatedAt;
     private final LocalDateTime dueDate;
 
-    public static TaskCreateResponse from(TaskDto dto) {
-        return new TaskCreateResponse(
+    public static TaskResponse from(TaskDto dto) {
+        return new TaskResponse(
                 dto.getId(),
                 dto.getTitle(),
                 dto.getDescription(),
