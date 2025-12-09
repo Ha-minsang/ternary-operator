@@ -3,15 +3,18 @@ package com.team3.ternaryoperator.domain.user.service;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
-import com.team3.ternaryoperator.domain.user.dto.request.UserCreateRequest;
-import com.team3.ternaryoperator.domain.user.dto.response.UserGetResponse;
-import com.team3.ternaryoperator.domain.user.dto.response.UserResponse;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
+import com.team3.ternaryoperator.domain.user.model.dto.UserDto;
+import com.team3.ternaryoperator.domain.user.model.request.UserCreateRequest;
+import com.team3.ternaryoperator.domain.user.model.response.UserGetResponse;
+import com.team3.ternaryoperator.domain.user.model.response.UserResponse;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,13 +46,27 @@ public class UserService {
         );
 
         User saved = userRepository.save(user);
-
-        return UserResponse.from(saved);
+        UserDto userDto = UserDto.from(saved);
+        return UserResponse.from(userDto);
     }
 
-    public UserGetResponse getMyInfo(Long id) {
+    @Transactional(readOnly = true)
+    public UserGetResponse getUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return UserGetResponse.from(user);
+        UserDto userDto = UserDto.from(user);
+        return UserGetResponse.from(userDto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserResponse> getUsers() {
+        List<User> userList = userRepository.findAll();
+        List<UserDto> userDtoList = userList.stream()
+                .map(UserDto::from)
+                .toList();
+
+        return userDtoList.stream()
+                .map(UserResponse::from)
+                .toList();
     }
 }

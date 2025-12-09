@@ -1,7 +1,7 @@
-package com.team3.ternaryoperator.domain.user.dto.response;
+package com.team3.ternaryoperator.domain.user.model.response;
 
-import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
+import com.team3.ternaryoperator.domain.user.model.dto.UserDto;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -27,15 +27,15 @@ public class UserGetResponse {
         this.updatedAt = updatedAt;
     }
 
-    public static UserGetResponse from(User user) {
+    public static UserGetResponse from(UserDto userDto) {
         return new UserGetResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getName(),
-                user.getRole(),
-                user.getCreatedAt(),
-                user.getUpdatedAt()
+                userDto.getId(),
+                userDto.getUsername(),
+                userDto.getEmail(),
+                userDto.getName(),
+                userDto.getRole(),
+                userDto.getCreatedAt(),
+                userDto.getUpdatedAt()
         );
     }
 }
