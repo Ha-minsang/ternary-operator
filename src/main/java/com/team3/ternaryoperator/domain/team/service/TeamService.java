@@ -39,14 +39,7 @@ public class TeamService {
         Team newTeam = new Team(name, description);
         Team savedTeam = teamRepository.save(newTeam);
 
-        List<MemberDto> members = userRepository.findByTeamId(savedTeam.getId())
-                .stream()
-                .map(MemberDto::from)
-                .toList();
-
-        TeamDto dto = TeamDto.from(savedTeam);
-
-        return TeamResponse.from(dto, members);
+        return toTeamResponse(savedTeam);
     }
 
     @Transactional(readOnly = true)
