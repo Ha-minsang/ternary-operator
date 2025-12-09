@@ -24,9 +24,7 @@ public class TaskUpdateRequest {
     @NotBlank(message = "우선순위를 입력해주세요.")
     private String priority;
 
-    @NotBlank(message = "담당자를 입력해주세요.")
     private Long assigneeId;
 
-    @NotBlank(message = "마감일을 선택해주세요.")
     private LocalDateTime dueDate;
 }

@@ -33,7 +33,6 @@ public class TaskService {
         );
 
         TaskPriority taskPriority = TaskPriority.valueOf(request.getPriority());
-
         Task task = taskRepository.save(new Task(request.getTitle(), request.getDescription(), TaskStatus.TODO, taskPriority, user, request.getDueDate()));
         TaskDto dto = TaskDto.from(task);
         return TaskResponse.from(dto);
@@ -60,5 +59,4 @@ public class TaskService {
             throw new CustomException(TASK_FORBIDDEN_ONLY_ASSIGNEE);
         }
     }
-
 }
