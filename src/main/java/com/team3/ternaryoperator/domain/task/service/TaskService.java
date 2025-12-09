@@ -1,6 +1,7 @@
 package com.team3.ternaryoperator.domain.task.service;
 
 
+import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
@@ -11,12 +12,18 @@ import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
 import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.response.AssigneeResponse;
 import com.team3.ternaryoperator.domain.task.model.response.TaskDetailResponse;
+import com.team3.ternaryoperator.domain.task.model.response.TaskGetResponse;
 import com.team3.ternaryoperator.domain.task.model.response.TaskResponse;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 
 import static com.team3.ternaryoperator.common.exception.ErrorCode.*;
 
@@ -30,9 +37,9 @@ public class TaskService {
     // 작업 생성
     @Transactional
     public TaskResponse createTask(Long id, TaskCreateRequest request) {
-        User user = getUserByIdOrThrow(id);
+        User assignee = getUserByIdOrThrow(id);
         TaskPriority taskPriority = TaskPriority.valueOf(request.getPriority());
-        Task task = taskRepository.save(new Task(request.getTitle(), request.getDescription(), TaskStatus.TODO, taskPriority, user, request.getDueDate()));
+        Task task = taskRepository.save(new Task(request.getTitle(), request.getDescription(), TaskStatus.TODO, taskPriority, assignee, request.getDueDate()));
         TaskDto dto = TaskDto.from(task);
         return TaskResponse.from(dto);
     }
@@ -40,9 +47,9 @@ public class TaskService {
     // 작업 수정
     @Transactional
     public TaskResponse updateTask(Long userId, Long taskId, TaskUpdateRequest request) {
-        User user = getUserByIdOrThrow(userId);
+        User assignee = getUserByIdOrThrow(userId);
         Task task = getTaskByIdOrThrow(taskId);
-        matchedAssignee(user.getId(), task.getAssignee().getId());
+        matchedAssignee(assignee.getId(), task.getAssignee().getId());
         task.update(request);
         taskRepository.save(task);
         TaskDto dto = TaskDto.from(task);
@@ -53,10 +60,28 @@ public class TaskService {
     @Transactional(readOnly = true)
     public TaskDetailResponse getOneTask(Long id) {
         Task task = getTaskByIdOrThrow(id);
-        User user = getUserByIdOrThrow(task.getAssignee().getId());
-        return TaskDetailResponse.from(TaskDto.from(task), AssigneeResponse.from(user));
+        User assignee = getUserByIdOrThrow(task.getAssignee().getId());
+        return TaskDetailResponse.from(TaskDto.from(task), AssigneeResponse.from(assignee));
     }
 
+    // 작업 목록 조회
+    @Transactional(readOnly = true)
+    public PageResponse<TaskGetResponse> getAllTask(String status, String search, Long assigneeId, Pageable pageable) {
+
+        Page<Task> taskPage = taskRepository.getTasks(status, search, assigneeId, pageable);
+        Page<TaskDto> taskList = taskPage.map(TaskDto::from);
+        Page<TaskGetResponse> asdf1 = taskList.map(taskDto -> TaskGetResponse.from(taskDto, AssigneeResponse.from(taskDto.getAssignee())));
+        PageResponse<TaskGetResponse> taskPageList = PageResponse.from(asdf1);
+        return taskPageList;
+
+//        Map<String, Long> a = asdf.stream().collect()
+
+        // pageresponse 안에 있는 값을 dto로 변환하고
+        // 이거를 또 TaskGetResponse로 변환
+
+
+
+    }
 
     // 유저 아이디가 일치하는 유저가 없으면 예외처리
     private User getUserByIdOrThrow(Long id) {
@@ -78,4 +103,6 @@ public class TaskService {
             throw new CustomException(TASK_FORBIDDEN_ONLY_ASSIGNEE);
         }
     }
+
+
 }

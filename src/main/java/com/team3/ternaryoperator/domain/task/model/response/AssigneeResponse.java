@@ -12,12 +12,12 @@ public class AssigneeResponse {
     private final String name;
     private final String email;
 
-    public static AssigneeResponse from(User user) {
+    public static AssigneeResponse from(User assignee) {
         return new AssigneeResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getName(),
-                user.getEmail()
+                assignee.getId(),
+                assignee.getUsername(),
+                assignee.getName(),
+                assignee.getEmail()
         );
     }
 }

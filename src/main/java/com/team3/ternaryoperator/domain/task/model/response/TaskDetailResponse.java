@@ -30,7 +30,7 @@ public class TaskDetailResponse {
                 dto.getDescription(),
                 dto.getStatus(),
                 dto.getPriority(),
-                dto.getAssignee(),
+                dto.getAssignee().getId(),
                 assignee,
                 dto.getCreatedAt(),
                 dto.getUpdatedAt(),
