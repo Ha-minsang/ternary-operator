@@ -7,6 +7,7 @@ import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import com.team3.ternaryoperator.domain.user.model.dto.UserDto;
 import com.team3.ternaryoperator.domain.user.model.request.UserCreateRequest;
+import com.team3.ternaryoperator.domain.user.model.request.UserDeleteRequest;
 import com.team3.ternaryoperator.domain.user.model.request.UserUpdateRequest;
 import com.team3.ternaryoperator.domain.user.model.response.UserDetailResponse;
 import com.team3.ternaryoperator.domain.user.model.response.UserResponse;
@@ -55,8 +56,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDetailResponse getUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = getUserByIdOrThrow(id);
         UserDto userDto = UserDto.from(user);
         return UserDetailResponse.from(userDto);
     }
@@ -75,8 +75,7 @@ public class UserService {
 
     @Transactional
     public UserDetailResponse updateUser(AuthUser authUser, Long id, @Valid UserUpdateRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = getUserByIdOrThrow(id);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
@@ -85,6 +84,7 @@ public class UserService {
         if (!authUser.getId().equals(id)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
+
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
@@ -99,5 +99,27 @@ public class UserService {
         userRepository.flush();
         UserDto userDto = UserDto.from(user);
         return UserDetailResponse.from(userDto);
+    }
+
+    @Transactional
+    public void deleteUser(AuthUser authUser, Long id, @Valid UserDeleteRequest request) {
+
+        User user = getUserByIdOrThrow(id);
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        if (!authUser.getId().equals(id)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+
+        user.softDelete();
+    }
+
+    private User getUserByIdOrThrow(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        return user;
     }
 }

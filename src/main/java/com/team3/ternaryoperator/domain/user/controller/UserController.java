@@ -3,6 +3,7 @@ package com.team3.ternaryoperator.domain.user.controller;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.CommonResponse;
 import com.team3.ternaryoperator.domain.user.model.request.UserCreateRequest;
+import com.team3.ternaryoperator.domain.user.model.request.UserDeleteRequest;
 import com.team3.ternaryoperator.domain.user.model.request.UserUpdateRequest;
 import com.team3.ternaryoperator.domain.user.model.response.UserDetailResponse;
 import com.team3.ternaryoperator.domain.user.model.response.UserResponse;
@@ -39,7 +40,7 @@ public class UserController {
     ) {
         UserDetailResponse response = userService.getUser(id);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(HttpStatus.OK)
                 .body(CommonResponse.success(response, "사용자 정보 조회 성공."));
     }
 
@@ -56,6 +57,18 @@ public class UserController {
             @Valid @RequestBody UserUpdateRequest request
     ) {
         UserDetailResponse response = userService.updateUser(authUser, id, request);
-        return CommonResponse.success(response, "사용자 정보가 수정되었습니다.");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success(response, "사용자 정보가 수정되었습니다."));
+    }
+
+    @DeleteMapping("/api/users/{id}")
+    public ResponseEntity<CommonResponse<Void>> deleteUser(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long id,
+            @Valid @RequestBody UserDeleteRequest request
+    ) {
+        userService.deleteUser(authUser, id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(null, "회원 탈퇴가 완료되었습니다."));
     }
 }
