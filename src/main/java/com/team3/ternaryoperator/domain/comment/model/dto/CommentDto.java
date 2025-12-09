@@ -1,24 +1,28 @@
-package com.team3.ternaryoperator.domain.comment.dto.response;
+package com.team3.ternaryoperator.domain.comment.model.dto;
 
 import com.team3.ternaryoperator.common.entity.Comment;
 import com.team3.ternaryoperator.common.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
-public class CommentResponse {
+public class CommentDto {
 
-    private final Long id;
-    private final Long taskId;
-    private final Long userId;
-    private final UserInfo user;
-    private final String content;
-    private final Long parentId;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    private Long id;
+    private Long taskId;
+    private Long userId;
+
+    private UserInfo user;
+    private String content;
+    private Long parentId;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Getter
     @AllArgsConstructor
@@ -36,8 +40,8 @@ public class CommentResponse {
         }
     }
 
-    public static CommentResponse from(Comment comment) {
-        return new CommentResponse(
+    public static CommentDto from(Comment comment) {
+        return new CommentDto(
                 comment.getId(),
                 comment.getTask().getId(),
                 comment.getUser().getId(),

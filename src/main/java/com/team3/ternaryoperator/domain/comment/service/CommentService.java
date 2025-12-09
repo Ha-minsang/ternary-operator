@@ -1,18 +1,27 @@
 package com.team3.ternaryoperator.domain.comment.service;
 
+import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.Comment;
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
-import com.team3.ternaryoperator.domain.comment.dto.request.CommentCreateRequest;
-import com.team3.ternaryoperator.domain.comment.dto.response.CommentResponse;
+import com.team3.ternaryoperator.domain.comment.model.dto.CommentDto;
+import com.team3.ternaryoperator.domain.comment.model.dto.CommentGetDto;
+import com.team3.ternaryoperator.domain.comment.model.request.CommentCreateRequest;
+import com.team3.ternaryoperator.domain.comment.model.response.CommentGetResponse;
+import com.team3.ternaryoperator.domain.comment.model.response.CommentResponse;
 import com.team3.ternaryoperator.domain.comment.repository.CommentRepository;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +59,30 @@ public class CommentService {
 
         Comment saved = commentRepository.save(comment);
 
-        return CommentResponse.from(saved);
+        return CommentResponse.from(CommentDto.from(saved));
+    }
+
+    public PageResponse<CommentGetResponse> getComments(Long taskId, String sort, Pageable pageable) {
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+
+        Sort sortOption = sort.equalsIgnoreCase("oldest")
+                ? Sort.by("createdAt").ascending()
+                : Sort.by("createdAt").descending();
+
+        Pageable finalPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                sortOption
+        );
+
+        Page<Comment> comments = commentRepository.findByTask(task, finalPageable);
+
+        // commentPage.map(comment -> CommentResponse.from(comment)) 과 동일하다
+        Page<CommentGetResponse> mapped = comments
+                .map(comment -> CommentGetResponse.from(CommentGetDto.from(comment)));
+
+        return PageResponse.from(mapped);
     }
 }
