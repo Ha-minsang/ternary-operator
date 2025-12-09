@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class TeamCreateResponse {
+public class TeamResponse {
 
     private final Long id;
     private final String name;
@@ -16,7 +16,7 @@ public class TeamCreateResponse {
     private final LocalDateTime createdAt;
     private final List<MemberDto> members;
 
-    public TeamCreateResponse(Long id, String name, String description, LocalDateTime createdAt, List<MemberDto> members) {
+    public TeamResponse(Long id, String name, String description, LocalDateTime createdAt, List<MemberDto> members) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -24,8 +24,8 @@ public class TeamCreateResponse {
         this.members = members;
     }
 
-    public static TeamCreateResponse from(TeamDto dto, List<MemberDto> members) {
-        return new TeamCreateResponse(
+    public static TeamResponse from(TeamDto dto, List<MemberDto> members) {
+        return new TeamResponse(
                 dto.getId(),
                 dto.getName(),
                 dto.getDescription(),
