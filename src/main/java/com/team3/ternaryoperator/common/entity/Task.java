@@ -1,6 +1,7 @@
 package com.team3.ternaryoperator.common.entity;
 
 import com.team3.ternaryoperator.domain.task.enums.*;
+import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -46,5 +47,15 @@ public class Task extends BaseEntity {
         this.priority = priority;
         this.assignee = assignee;
         this.dueDate = dueDate;
+    }
+
+
+    public void update(TaskUpdateRequest request) {
+        this.title = request.getTitle();
+        this.description = request.getDescription();
+        this.status = TaskStatus.valueOf(request.getStatus());
+        this.priority = TaskPriority.valueOf(request.getPriority());
+        this.assignee = getAssignee();
+        this.dueDate = getDueDate();
     }
 }
