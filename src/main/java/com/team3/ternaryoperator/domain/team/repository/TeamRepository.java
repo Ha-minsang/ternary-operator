@@ -1,4 +1,4 @@
-package com.team3.ternaryoperator.team.repository;
+package com.team3.ternaryoperator.domain.team.repository;
 
 import com.team3.ternaryoperator.common.entity.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
