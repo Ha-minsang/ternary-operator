@@ -45,9 +45,11 @@ public class UserController {
     }
 
     @GetMapping
-    public CommonResponse<List<UserResponse>> getUsers() {
+    public ResponseEntity<CommonResponse<List<UserResponse>>> getUsers() {
         List<UserResponse> users = userService.getUsers();
-        return CommonResponse.success(users, "사용자 목록 조회 성공");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success(users, "사용자 목록 조회 성공"));
     }
 
     @PutMapping("/{id}")
@@ -62,7 +64,7 @@ public class UserController {
                 .body(CommonResponse.success(response, "사용자 정보가 수정되었습니다."));
     }
 
-    @DeleteMapping("/api/users/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<CommonResponse<Void>> deleteUser(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long id,
@@ -70,5 +72,14 @@ public class UserController {
     ) {
         userService.deleteUser(authUser, id, request);
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(null, "회원 탈퇴가 완료되었습니다."));
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<CommonResponse<List<UserResponse>>> getAvailableUsers(
+            @RequestParam(required = false) Long teamId
+    ) {
+        List<UserResponse> response = userService.getAvailableUsers(teamId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponse.success(response, "추가 가능한 사용자 목록 조회 성공"));
     }
 }

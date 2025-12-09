@@ -117,6 +117,18 @@ public class UserService {
         user.softDelete();
     }
 
+    @Transactional
+    public List<UserResponse> getAvailableUsers(Long teamId) {
+        List<User> userList = userRepository.findByTeamIdNot(teamId);
+        List<UserDto> userDtoList = userList.stream()
+                .map(UserDto::from)
+                .toList();
+
+        return userDtoList.stream()
+                .map(UserResponse::from)
+                .toList();
+    }
+
     private User getUserByIdOrThrow(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
