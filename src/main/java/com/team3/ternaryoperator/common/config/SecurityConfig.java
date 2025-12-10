@@ -4,6 +4,7 @@ import com.team3.ternaryoperator.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,6 +21,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        http.cors(Customizer.withDefaults());
         http.csrf(csrf -> csrf.disable());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
@@ -27,7 +29,7 @@ public class SecurityConfig {
         http.httpBasic(basic -> basic.disable());
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login", "/api/users").permitAll()
+                .requestMatchers("/api/login", "/api/auth/login", "/api/users").permitAll()
                 .anyRequest().authenticated()
         );
 

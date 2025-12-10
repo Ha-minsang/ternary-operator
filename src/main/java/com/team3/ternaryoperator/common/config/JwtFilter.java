@@ -91,6 +91,9 @@ public class JwtFilter extends OncePerRequestFilter {
         if ("/api/users".equals(uri)) {
             return true;
         }
+        if ("/api/login".equals(uri)) {
+            return true;
+        }
         return false;
     }
 }
