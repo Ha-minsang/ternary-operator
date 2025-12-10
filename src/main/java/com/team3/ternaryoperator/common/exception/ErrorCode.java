@@ -30,9 +30,10 @@ public enum ErrorCode {
 
     // Team 관련 ErrorCode
     TEAM_NAME_DUPLICATED(HttpStatus.UNAUTHORIZED, "이미 존재하는 팀 이름입니다."),
-    TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "팀을 찾을 수 없습니다."),
+    TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "팀 또는 멤버를 찾을 수 없습니다."),
     NO_PERMISSION_TEAM_UPDATE(HttpStatus.FORBIDDEN, "수정 권한이 없습니다."),
     NO_PERMISSION_TEAM_DELETE(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다."),
+    NO_PERMISSION_TEAM_MEMBER_DELETE(HttpStatus.FORBIDDEN, "제거 권한이 없습니다."),
     EXIST_MEMBER(HttpStatus.CONFLICT, "팀에 멤버가 존재하여 삭제할 수 없습니다."),
     ALREADY_IN_TEAM(HttpStatus.CONFLICT, "이미 팀에 속한 멤버입니다."),
 
@@ -40,9 +41,12 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
     COMMENT_FORBIDDEN_ONLY_USER(HttpStatus.FORBIDDEN, "댓글을 수정할 권한이 없습니다."),
     COMMENT_NOT_EXIST(HttpStatus.NOT_FOUND, "해당 작업에 댓글이 존재하지 않습니다."),
-    COMMENT_NOT_DELETE_AUTHORIZATION(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다.");
+    COMMENT_NOT_DELETE_AUTHORIZATION(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다."),
 
     // Activity 관련 ErrorCode
+
+    // Search 관련 ErrorCode
+    SEARCH_QUERY_EMPTY(HttpStatus.BAD_REQUEST, "검색어를 입력해주세요.");
 
     private final HttpStatus status;
     private final String message;

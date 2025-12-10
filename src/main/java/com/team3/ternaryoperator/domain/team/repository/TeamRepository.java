@@ -12,4 +12,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     // deletedAt 기반 소프트 딜리트
     List<Team> findAllByDeletedAtIsNull();
+
+    List<Team> findAllByNameContaining(String query);
 }
