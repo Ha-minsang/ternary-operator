@@ -1,9 +1,7 @@
 package com.team3.ternaryoperator.domain.task.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryFactory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.QTask;
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
@@ -26,12 +24,10 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
     public Page<Task> getTasks(String status, String search, Long assigneeId, Pageable pageable) {
         QTask task = QTask.task;
 
-
-
         BooleanBuilder builder = new BooleanBuilder();
 
         if(status != null && !status.isBlank()) {
-            TaskStatus taskStatus = TaskStatus.valueOf(status.toUpperCase());
+            TaskStatus taskStatus = TaskStatus.valueOf(status);
             builder.and(task.status.eq(taskStatus));
         }
 
@@ -49,8 +45,6 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
                                             .limit(pageable.getPageSize())
                                             .orderBy(task.createdAt.desc())
                                             .fetch();
-
-
 
         Long total = jpaQueryFactory.select(task.count())
                                     .from(task)

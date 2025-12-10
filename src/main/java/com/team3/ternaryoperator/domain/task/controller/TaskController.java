@@ -3,8 +3,8 @@ package com.team3.ternaryoperator.domain.task.controller;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.CommonResponse;
 import com.team3.ternaryoperator.common.dto.PageResponse;
-import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
 import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
+import com.team3.ternaryoperator.domain.task.model.request.TaskStatusUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.response.TaskDetailResponse;
 import com.team3.ternaryoperator.domain.task.model.response.TaskGetResponse;
@@ -12,8 +12,6 @@ import com.team3.ternaryoperator.domain.task.model.response.TaskResponse;
 import com.team3.ternaryoperator.domain.task.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -78,4 +76,28 @@ public class TaskController {
                 .body(CommonResponse.success(response, "작업 목록 조회 성공"));
     }
 
+    // 작업 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CommonResponse<Void>> deleteTask(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long id
+    ) {
+        taskService.deleteTask(authUser, id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success(null, "작업이 삭제되었습니다."));
+    }
+
+    // 작업 상태 변경
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<CommonResponse<TaskGetResponse>> updateTaskStatus(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long id,
+            @Valid @RequestBody TaskStatusUpdateRequest request
+    ) {
+        TaskGetResponse response = taskService.updateTaskStatus(authUser, id, request);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success(response, "작업 상태가 변경되었습니다."));
+    }
 }

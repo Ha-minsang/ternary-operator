@@ -1,6 +1,6 @@
 package com.team3.ternaryoperator.domain.task.service;
 
-
+import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
@@ -9,6 +9,7 @@ import com.team3.ternaryoperator.domain.task.enums.TaskPriority;
 import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
 import com.team3.ternaryoperator.domain.task.model.dto.TaskDto;
 import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
+import com.team3.ternaryoperator.domain.task.model.request.TaskStatusUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.response.AssigneeResponse;
 import com.team3.ternaryoperator.domain.task.model.response.TaskDetailResponse;
@@ -16,14 +17,13 @@ import com.team3.ternaryoperator.domain.task.model.response.TaskGetResponse;
 import com.team3.ternaryoperator.domain.task.model.response.TaskResponse;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
 
 import static com.team3.ternaryoperator.common.exception.ErrorCode.*;
 
@@ -67,20 +67,31 @@ public class TaskService {
     // 작업 목록 조회
     @Transactional(readOnly = true)
     public PageResponse<TaskGetResponse> getAllTask(String status, String search, Long assigneeId, Pageable pageable) {
-
         Page<Task> taskPage = taskRepository.getTasks(status, search, assigneeId, pageable);
         Page<TaskDto> taskList = taskPage.map(TaskDto::from);
-        Page<TaskGetResponse> asdf1 = taskList.map(taskDto -> TaskGetResponse.from(taskDto, AssigneeResponse.from(taskDto.getAssignee())));
-        PageResponse<TaskGetResponse> taskPageList = PageResponse.from(asdf1);
-        return taskPageList;
+        Page<TaskGetResponse> taskPageList = taskList.map(taskDto -> TaskGetResponse.from(taskDto, AssigneeResponse.from(taskDto.getAssignee())));
+        return PageResponse.from(taskPageList);
+    }
 
-//        Map<String, Long> a = asdf.stream().collect()
+    // 작업 삭제
+    @Transactional
+    public void deleteTask(AuthUser authUser, Long id) {
+        Task task = getTaskByIdOrThrow(id);
+        User assignee = getUserByIdOrThrow(authUser.getId());
+        matchedAssignee(assignee.getId(), task.getAssignee().getId());
+        task.softDelete();
+    }
 
-        // pageresponse 안에 있는 값을 dto로 변환하고
-        // 이거를 또 TaskGetResponse로 변환
-
-
-
+    // 작업 상태 변경
+    public TaskGetResponse updateTaskStatus(AuthUser authUser, Long id, @Valid TaskStatusUpdateRequest request) {
+        Task task = getTaskByIdOrThrow(id);
+        User assignee = getUserByIdOrThrow(authUser.getId());
+        matchedAssignee(assignee.getId(), task.getAssignee().getId());
+        TaskStatus newStatus = TaskStatus.valueOf(request.getStatus());
+        task.changeStatus(newStatus);
+        taskRepository.save(task);
+        TaskDto dto = TaskDto.from(task);
+        return TaskGetResponse.from(dto, AssigneeResponse.from(assignee));
     }
 
     // 유저 아이디가 일치하는 유저가 없으면 예외처리
@@ -103,6 +114,4 @@ public class TaskService {
             throw new CustomException(TASK_FORBIDDEN_ONLY_ASSIGNEE);
         }
     }
-
-
 }
