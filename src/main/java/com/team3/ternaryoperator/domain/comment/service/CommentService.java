@@ -26,6 +26,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -110,7 +112,7 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long taskId, Long commentId, AuthUser authUser) {
 
-        // 댓글 조회 (deleted_at != null 자동 필터링)
+        // 댓글 조회
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
 
@@ -120,6 +122,13 @@ public class CommentService {
             throw new CustomException(ErrorCode.COMMENT_NOT_DELETE_AUTHORIZATION);
         }
 
+        // 대댓글 soft delete
+        List<Comment> childComments = commentRepository.findByParentComment_Id(comment.getId());
+        childComments.forEach(Comment::softDelete);
+
+        // 부모 soft delete
         comment.softDelete();
+
     }
+
 }

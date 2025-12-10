@@ -54,15 +54,15 @@ public class Task extends BaseEntity {
     }
 
     // 업데이트
-    public void update(TaskUpdateRequest request) {
+    public void update(TaskUpdateRequest request, User newAssignee) {
         this.title = request.getTitle();
         this.description = request.getDescription();
         if (request.getStatus() != null) {
             this.status = TaskStatus.valueOf(request.getStatus());
         }
         this.priority = TaskPriority.valueOf(request.getPriority());
-        this.assignee = getAssignee();
-        this.dueDate = getDueDate();
+        this.assignee = newAssignee;
+        this.dueDate = request.getDueDate();
     }
 
     // 상태 변경
