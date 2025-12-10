@@ -1,7 +1,7 @@
 package com.team3.ternaryoperator.domain.team.model.response;
 
-import com.team3.ternaryoperator.domain.team.model.dto.MemberDto;
 import com.team3.ternaryoperator.domain.team.model.dto.TeamDto;
+import com.team3.ternaryoperator.domain.team.model.dto.TeamMemberDto;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -14,9 +14,9 @@ public class TeamResponse {
     private final String name;
     private final String description;
     private final LocalDateTime createdAt;
-    private final List<MemberDto> members;
+    private final List<TeamMemberDto> members;
 
-    public TeamResponse(Long id, String name, String description, LocalDateTime createdAt, List<MemberDto> members) {
+    public TeamResponse(Long id, String name, String description, LocalDateTime createdAt, List<TeamMemberDto> members) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -24,7 +24,7 @@ public class TeamResponse {
         this.members = members;
     }
 
-    public static TeamResponse from(TeamDto dto, List<MemberDto> members) {
+    public static TeamResponse fromMembers(TeamDto dto, List<TeamMemberDto> members) {
         return new TeamResponse(
                 dto.getId(),
                 dto.getName(),
