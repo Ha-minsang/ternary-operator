@@ -164,7 +164,7 @@ public class TeamService {
         getTeamOrThrow(teamId);
 
         User target = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 유저가 이 팀 소속이 아닌 경우
         if (target.getTeam() == null || !target.getTeam().getId().equals(teamId)) {
