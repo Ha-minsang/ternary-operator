@@ -18,4 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByTeamIdNot(Long teamId);
 
     List<User> findByTeamId(Long teamId);
+
+    // User.id와 Team.id를 동시에 만족하는 사용자가 존재하는지 확인
+    boolean existsByIdAndTeamId(Long userId, Long teamId);
 }

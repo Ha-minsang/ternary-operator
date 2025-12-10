@@ -44,4 +44,15 @@ public class TeamController {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 조회 성공"));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CommonResponse<TeamResponse>> updateTeamApi(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long id,
+            @Valid @RequestBody TeamRequest request) {
+
+        TeamResponse response = teamService.updateTeam(authUser, id, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 정보가 수정되었습니다."));
+    }
 }
