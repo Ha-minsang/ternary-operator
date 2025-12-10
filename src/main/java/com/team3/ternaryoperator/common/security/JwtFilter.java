@@ -1,7 +1,6 @@
-package com.team3.ternaryoperator.common.config;
+package com.team3.ternaryoperator.common.security;
 
 import com.team3.ternaryoperator.common.dto.AuthUser;
-import com.team3.ternaryoperator.common.util.JwtUtil;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -50,10 +49,6 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         try {
-            if (!jwtUtil.validateToken(token)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
 
             Claims claims = jwtUtil.getClaims(token);
 

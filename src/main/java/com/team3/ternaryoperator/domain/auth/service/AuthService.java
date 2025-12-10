@@ -3,7 +3,7 @@ package com.team3.ternaryoperator.domain.auth.service;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
-import com.team3.ternaryoperator.common.util.JwtUtil;
+import com.team3.ternaryoperator.common.security.JwtUtil;
 import com.team3.ternaryoperator.domain.auth.dto.request.LoginRequest;
 import com.team3.ternaryoperator.domain.auth.dto.request.VerifyPasswordRequest;
 import com.team3.ternaryoperator.domain.auth.dto.response.LoginResponse;
