@@ -1,5 +1,6 @@
 package com.team3.ternaryoperator.domain.task.model.request;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -23,7 +24,9 @@ public class TaskUpdateRequest {
     @NotBlank(message = "우선순위를 입력해주세요.")
     private String priority;
 
+
     private Long assigneeId;
 
+    @FutureOrPresent
     private LocalDateTime dueDate;
 }

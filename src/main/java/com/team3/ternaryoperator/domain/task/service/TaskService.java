@@ -36,8 +36,8 @@ public class TaskService {
 
     // 작업 생성
     @Transactional
-    public TaskResponse createTask(Long id, TaskCreateRequest request) {
-        User assignee = getUserByIdOrThrow(id);
+    public TaskResponse createTask(AuthUser authUser, TaskCreateRequest request) {
+        User assignee = getUserByIdOrThrow(authUser.getId());
         TaskPriority taskPriority = TaskPriority.valueOf(request.getPriority());
         Task task = taskRepository.save(new Task(request.getTitle(), request.getDescription(), TaskStatus.TODO, taskPriority, assignee, request.getDueDate()));
         TaskDto dto = TaskDto.from(task);
@@ -46,11 +46,12 @@ public class TaskService {
 
     // 작업 수정
     @Transactional
-    public TaskResponse updateTask(Long userId, Long taskId, TaskUpdateRequest request) {
-        User assignee = getUserByIdOrThrow(userId);
+    public TaskResponse updateTask(AuthUser authUser, Long taskId, TaskUpdateRequest request) {
+        User assignee = getUserByIdOrThrow(authUser.getId());
         Task task = getTaskByIdOrThrow(taskId);
+        User newAssignee = getUserByIdOrThrow(request.getAssigneeId());
         matchedAssignee(assignee.getId(), task.getAssignee().getId());
-        task.update(request);
+        task.update(request, newAssignee);
         taskRepository.save(task);
         TaskDto dto = TaskDto.from(task);
         return TaskResponse.from(dto);
