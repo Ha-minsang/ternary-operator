@@ -124,7 +124,6 @@ public class CommentService {
 
         // 대댓글 soft delete
         List<Comment> childComments = commentRepository.findByParentComment_Id(comment.getId());
-        System.out.println("자식 댓글들" + childComments);
         childComments.forEach(Comment::softDelete);
 
         // 부모 soft delete
