@@ -7,10 +7,12 @@ import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.team.model.dto.MemberDto;
 import com.team3.ternaryoperator.domain.team.model.dto.TeamDto;
+import com.team3.ternaryoperator.domain.team.model.dto.TeamMemberDetailDto;
 import com.team3.ternaryoperator.domain.team.model.dto.TeamMemberDto;
 import com.team3.ternaryoperator.domain.team.model.request.TeamCreateMemberRequest;
 import com.team3.ternaryoperator.domain.team.model.request.TeamRequest;
 import com.team3.ternaryoperator.domain.team.model.response.TeamDetailResponse;
+import com.team3.ternaryoperator.domain.team.model.response.TeamGetMemberResponse;
 import com.team3.ternaryoperator.domain.team.model.response.TeamResponse;
 import com.team3.ternaryoperator.domain.team.repository.TeamRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
@@ -67,8 +69,7 @@ public class TeamService {
     @Transactional(readOnly = true)
     public TeamDetailResponse getOneTeam(Long id) {
 
-        Team foundTeam = teamRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+        Team foundTeam = getTeamOrThrow(id);
 
         return toTeamResponse(foundTeam);
     }
@@ -76,9 +77,9 @@ public class TeamService {
     @Transactional
     public TeamDetailResponse updateTeam(AuthUser authUser, Long id, TeamRequest request) {
 
-        Team foundTeam = teamRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+        Team foundTeam = getTeamOrThrow(id);
 
+        // 수정 권한 확인
         boolean isMember = userRepository.existsByIdAndTeamId(authUser.getId(), id);
         if (!isMember) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TEAM_UPDATE);
@@ -95,8 +96,7 @@ public class TeamService {
     @Transactional
     public void deleteTeam(AuthUser authUser, Long id) {
 
-        Team foundTeam = teamRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+        Team foundTeam = getTeamOrThrow(id);
 
         // 삭제 권한 확인
         boolean isMember = userRepository.existsByIdAndTeamId(authUser.getId(), id);
@@ -120,9 +120,7 @@ public class TeamService {
     @Transactional
     public TeamResponse createTeamMember(Long teamId, @Valid TeamCreateMemberRequest request) {
 
-        // 팀 조회
-        Team foundTeam = teamRepository.findById(teamId)
-                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+        Team foundTeam = getTeamOrThrow(teamId);
 
         // 추가할 멤버 조회
         User targetUser = userRepository.findById(request.getUserId())
@@ -144,6 +142,22 @@ public class TeamService {
         return TeamResponse.fromMembers(TeamDto.from(foundTeam), members);
     }
 
+    @Transactional(readOnly = true)
+    public List<TeamGetMemberResponse> getTeamMember(Long teamId) {
+
+        getTeamOrThrow(teamId);
+
+        // 팀 멤버 조회
+        List<TeamMemberDetailDto> members = userRepository.findByTeamId(teamId)
+                .stream()
+                .map(TeamMemberDetailDto::from)
+                .toList();
+
+        return members.stream()
+                .map(TeamGetMemberResponse::from)
+                .toList();
+    }
+
     // 헬퍼 메서드
     private TeamDetailResponse toTeamResponse(Team team) {
         List<User> users = userRepository.findByTeamId(team.getId());
@@ -152,5 +166,11 @@ public class TeamService {
                 .toList();
 
         return TeamDetailResponse.fromDetail(TeamDto.from(team), members);
+    }
+
+    // 팀 조회 시 일치하는 팀이 없으면 TEAM_NOT_FOUND 예외 발생
+    private Team getTeamOrThrow(Long teamId) {
+        return teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
     }
 }

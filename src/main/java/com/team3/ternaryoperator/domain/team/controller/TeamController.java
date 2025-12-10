@@ -5,6 +5,7 @@ import com.team3.ternaryoperator.common.dto.CommonResponse;
 import com.team3.ternaryoperator.domain.team.model.request.TeamCreateMemberRequest;
 import com.team3.ternaryoperator.domain.team.model.request.TeamRequest;
 import com.team3.ternaryoperator.domain.team.model.response.TeamDetailResponse;
+import com.team3.ternaryoperator.domain.team.model.response.TeamGetMemberResponse;
 import com.team3.ternaryoperator.domain.team.model.response.TeamResponse;
 import com.team3.ternaryoperator.domain.team.service.TeamService;
 import jakarta.validation.Valid;
@@ -76,4 +77,11 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 멤버가 추가되었습니다."));
     }
 
+    @GetMapping("/{teamId}/members")
+    public ResponseEntity<CommonResponse<List<TeamGetMemberResponse>>> getTeamMemberApi(@PathVariable Long teamId) {
+
+        List<TeamGetMemberResponse> response = teamService.getTeamMember(teamId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 멤버 조회 성공"));
+    }
 }
