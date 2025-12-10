@@ -89,7 +89,7 @@ public class TeamService {
     }
 
     @Transactional
-    public Void deleteTeam(AuthUser authUser, Long id) {
+    public void deleteTeam(AuthUser authUser, Long id) {
 
         Team foundTeam = teamRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
@@ -111,7 +111,6 @@ public class TeamService {
         me.changeTeam(null);
 
         foundTeam.softDelete();
-        return null;
     }
 
     // 헬퍼 메서드

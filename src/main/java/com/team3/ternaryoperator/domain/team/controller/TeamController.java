@@ -59,8 +59,8 @@ public class TeamController {
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponse<Void>> deleteTeamApi(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long id) {
 
-        Void response = teamService.deleteTeam(authUser, id);
+        teamService.deleteTeam(authUser, id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀이 삭제되었습니다."));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(null, "팀이 삭제되었습니다."));
     }
 }
