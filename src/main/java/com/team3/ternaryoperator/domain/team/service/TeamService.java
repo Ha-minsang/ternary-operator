@@ -77,7 +77,7 @@ public class TeamService {
 
         boolean isMember = userRepository.existsByIdAndTeamId(authUser.getId(), id);
         if (!isMember) {
-            throw new CustomException(ErrorCode.NO_PERMISSION_TEAM);
+            throw new CustomException(ErrorCode.NO_PERMISSION_TEAM_UPDATE);
         }
 
         String name = request.getName();
@@ -86,6 +86,31 @@ public class TeamService {
         foundTeam.updateTeamInformation(name, description);
 
         return toTeamResponse(foundTeam);
+    }
+
+    @Transactional
+    public void deleteTeam(AuthUser authUser, Long id) {
+
+        Team foundTeam = teamRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+
+        // 삭제 권한 확인
+        boolean isMember = userRepository.existsByIdAndTeamId(authUser.getId(), id);
+        if (!isMember) {
+            throw new CustomException(ErrorCode.NO_PERMISSION_TEAM_DELETE);
+        }
+
+        // 팀 멤버 수 확인
+        long memberCount = userRepository.countByTeamId(id);
+        if (memberCount > 1) {
+            throw new CustomException(ErrorCode.EXIST_MEMBER);
+        }
+
+        // 본인 팀 삭제
+        User me = userRepository.getReferenceById(authUser.getId());
+        me.changeTeam(null);
+
+        foundTeam.softDelete();
     }
 
     // 헬퍼 메서드

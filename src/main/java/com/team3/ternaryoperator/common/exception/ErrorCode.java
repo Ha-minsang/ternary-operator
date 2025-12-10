@@ -31,7 +31,9 @@ public enum ErrorCode {
     // Team 관련 ErrorCode
     TEAM_NAME_DUPLICATED(HttpStatus.UNAUTHORIZED, "이미 존재하는 팀 이름입니다."),
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "팀을 찾을 수 없습니다."),
-    NO_PERMISSION_TEAM(HttpStatus.FORBIDDEN, "수정 권한이 없습니다."),
+    NO_PERMISSION_TEAM_UPDATE(HttpStatus.FORBIDDEN, "수정 권한이 없습니다."),
+    NO_PERMISSION_TEAM_DELETE(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다."),
+    EXIST_MEMBER(HttpStatus.CONFLICT, "팀에 멤버가 존재하여 삭제할 수 없습니다."),
 
     // Comment 관련 ErrorCode
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
