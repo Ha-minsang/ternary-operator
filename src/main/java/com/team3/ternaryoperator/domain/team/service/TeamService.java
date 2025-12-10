@@ -69,6 +69,25 @@ public class TeamService {
         return toTeamResponse(foundTeam);
     }
 
+    @Transactional
+    public TeamResponse updateTeam(AuthUser authUser, Long id, TeamRequest request) {
+
+        Team foundTeam = teamRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+
+        boolean isMember = userRepository.existsByIdAndTeamId(authUser.getId(), id);
+        if (!isMember) {
+            throw new CustomException(ErrorCode.NO_PERMISSION_TEAM);
+        }
+
+        String name = request.getName();
+        String description = request.getDescription();
+
+        foundTeam.updateTeamInformation(name, description);
+
+        return toTeamResponse(foundTeam);
+    }
+
     // 헬퍼 메서드
     private TeamResponse toTeamResponse(Team team) {
         List<User> users = userRepository.findByTeamId(team.getId());

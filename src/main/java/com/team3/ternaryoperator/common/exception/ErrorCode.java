@@ -26,9 +26,11 @@ public enum ErrorCode {
     // Task 관련 ErrorCode
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, "작업을 찾을 수 없습니다."),
     TASK_FORBIDDEN_ONLY_ASSIGNEE(HttpStatus.FORBIDDEN, "수정 권한이 없습니다"),
+
     // Team 관련 ErrorCode
     TEAM_NAME_DUPLICATED(HttpStatus.UNAUTHORIZED, "이미 존재하는 팀 이름입니다."),
     TEAM_NOT_FOUND(HttpStatus.NOT_FOUND, "팀을 찾을 수 없습니다."),
+    NO_PERMISSION_TEAM(HttpStatus.FORBIDDEN, "수정 권한이 없습니다."),
 
     // Comment 관련 ErrorCode
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
