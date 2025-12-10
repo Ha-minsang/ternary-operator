@@ -21,4 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // User.id와 Team.id를 동시에 만족하는 사용자가 존재하는지 확인
     boolean existsByIdAndTeamId(Long userId, Long teamId);
+    
+    // 팀 멤버 수 확인
+    long countByTeamId(Long id);
 }
