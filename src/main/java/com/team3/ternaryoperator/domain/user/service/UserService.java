@@ -1,5 +1,6 @@
 package com.team3.ternaryoperator.domain.user.service;
 
+import com.team3.ternaryoperator.common.aop.TrackTime;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
@@ -27,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @TrackTime
     @Transactional
     public UserResponse signUp(UserCreateRequest request) {
 
