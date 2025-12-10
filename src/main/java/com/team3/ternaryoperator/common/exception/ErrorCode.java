@@ -43,7 +43,6 @@ public enum ErrorCode {
 
     // Activity 관련 ErrorCode
 
-
     private final HttpStatus status;
     private final String message;
 }
