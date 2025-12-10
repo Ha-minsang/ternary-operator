@@ -1,12 +1,13 @@
 package com.team3.ternaryoperator.domain.team.service;
 
+import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.entity.Team;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.team.model.dto.MemberDto;
 import com.team3.ternaryoperator.domain.team.model.dto.TeamDto;
-import com.team3.ternaryoperator.domain.team.model.request.TeamCreateRequest;
+import com.team3.ternaryoperator.domain.team.model.request.TeamRequest;
 import com.team3.ternaryoperator.domain.team.model.response.TeamResponse;
 import com.team3.ternaryoperator.domain.team.repository.TeamRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
@@ -26,9 +27,11 @@ public class TeamService {
     private final UserRepository userRepository;
 
     @Transactional
-    public TeamResponse createTeam(TeamCreateRequest request) {
+    public TeamResponse createTeam(AuthUser authUser, TeamRequest request) {
 
-        // user_not_found 검사는 하지 않음(보안 레이어에서 보장)
+        // 인증된 사용자 정보가 유효하지 않을 경우 NOT_LOGGED_IN(401)로 응답
+        User me = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_LOGGED_IN));
 
         String name = request.getName();
         String description = request.getDescription();
@@ -40,6 +43,9 @@ public class TeamService {
 
         Team newTeam = new Team(name, description);
         Team savedTeam = teamRepository.save(newTeam);
+
+        me.changeTeam(savedTeam); // 소속 설정(team_id 세팅)
+        userRepository.save(me);
 
         return toTeamResponse(savedTeam);
     }
@@ -72,6 +78,4 @@ public class TeamService {
 
         return TeamResponse.from(TeamDto.from(team), members);
     }
-
-
 }
