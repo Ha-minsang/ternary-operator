@@ -5,6 +5,7 @@ import com.team3.ternaryoperator.common.dto.CommonResponse;
 import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
 import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
+import com.team3.ternaryoperator.domain.task.model.request.TaskStatusUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.response.TaskDetailResponse;
 import com.team3.ternaryoperator.domain.task.model.response.TaskGetResponse;
@@ -88,5 +89,18 @@ public class TaskController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(CommonResponse.success(null, "작업이 삭제되었습니다."));
+    }
+
+    // 작업 상태 변경
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<CommonResponse<TaskGetResponse>> updateTaskStatus(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long id,
+            @Valid @RequestBody TaskStatusUpdateRequest request
+    ) {
+        TaskGetResponse response = taskService.updateTaskStatus(authUser, id, request);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success(response, "작업 상태가 변경되었습니다."));
     }
 }

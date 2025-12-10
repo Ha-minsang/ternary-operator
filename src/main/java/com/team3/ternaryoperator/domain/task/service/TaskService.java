@@ -9,6 +9,7 @@ import com.team3.ternaryoperator.domain.task.enums.TaskPriority;
 import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
 import com.team3.ternaryoperator.domain.task.model.dto.TaskDto;
 import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
+import com.team3.ternaryoperator.domain.task.model.request.TaskStatusUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.response.AssigneeResponse;
 import com.team3.ternaryoperator.domain.task.model.response.TaskDetailResponse;
@@ -16,6 +17,7 @@ import com.team3.ternaryoperator.domain.task.model.response.TaskGetResponse;
 import com.team3.ternaryoperator.domain.task.model.response.TaskResponse;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -78,6 +80,18 @@ public class TaskService {
         User assignee = getUserByIdOrThrow(authUser.getId());
         matchedAssignee(assignee.getId(), task.getAssignee().getId());
         task.softDelete();
+    }
+
+    // 작업 상태 변경
+    public TaskGetResponse updateTaskStatus(AuthUser authUser, Long id, @Valid TaskStatusUpdateRequest request) {
+        Task task = getTaskByIdOrThrow(id);
+        User assignee = getUserByIdOrThrow(authUser.getId());
+        matchedAssignee(assignee.getId(), task.getAssignee().getId());
+        TaskStatus newStatus = TaskStatus.valueOf(request.getStatus());
+        task.changeStatus(newStatus);
+        taskRepository.save(task);
+        TaskDto dto = TaskDto.from(task);
+        return TaskGetResponse.from(dto, AssigneeResponse.from(assignee));
     }
 
     // 유저 아이디가 일치하는 유저가 없으면 예외처리

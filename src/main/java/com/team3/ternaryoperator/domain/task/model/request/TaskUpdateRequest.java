@@ -18,7 +18,6 @@ public class TaskUpdateRequest {
     @Size(max = 255, message = "255이하로 작성해주세요.")
     private String description;
 
-    @NotBlank(message = "상태를 입력해주세요.")
     private String status;
 
     @NotBlank(message = "우선순위를 입력해주세요.")

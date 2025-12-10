@@ -31,7 +31,7 @@ public class TaskRepositoryImpl implements TaskRepositoryCustom {
         BooleanBuilder builder = new BooleanBuilder();
 
         if(status != null && !status.isBlank()) {
-            TaskStatus taskStatus = TaskStatus.valueOf(status.toUpperCase());
+            TaskStatus taskStatus = TaskStatus.valueOf(status);
             builder.and(task.status.eq(taskStatus));
         }
 
