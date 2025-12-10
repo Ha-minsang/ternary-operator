@@ -55,4 +55,12 @@ public class TeamController {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 정보가 수정되었습니다."));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CommonResponse<Void>> deleteTeamApi(@AuthenticationPrincipal AuthUser authUser, @PathVariable Long id) {
+
+        teamService.deleteTeam(authUser, id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(null, "팀이 삭제되었습니다."));
+    }
 }
