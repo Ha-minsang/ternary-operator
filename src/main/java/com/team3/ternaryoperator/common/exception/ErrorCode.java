@@ -34,6 +34,7 @@ public enum ErrorCode {
     NO_PERMISSION_TEAM_UPDATE(HttpStatus.FORBIDDEN, "수정 권한이 없습니다."),
     NO_PERMISSION_TEAM_DELETE(HttpStatus.FORBIDDEN, "삭제 권한이 없습니다."),
     EXIST_MEMBER(HttpStatus.CONFLICT, "팀에 멤버가 존재하여 삭제할 수 없습니다."),
+    ALREADY_IN_TEAM(HttpStatus.CONFLICT, "이미 팀에 속한 멤버입니다."),
 
     // Comment 관련 ErrorCode
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),

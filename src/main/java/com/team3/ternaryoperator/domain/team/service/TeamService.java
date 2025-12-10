@@ -7,10 +7,14 @@ import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.team.model.dto.MemberDto;
 import com.team3.ternaryoperator.domain.team.model.dto.TeamDto;
+import com.team3.ternaryoperator.domain.team.model.dto.TeamMemberDto;
+import com.team3.ternaryoperator.domain.team.model.request.TeamCreateMemberRequest;
 import com.team3.ternaryoperator.domain.team.model.request.TeamRequest;
+import com.team3.ternaryoperator.domain.team.model.response.TeamDetailResponse;
 import com.team3.ternaryoperator.domain.team.model.response.TeamResponse;
 import com.team3.ternaryoperator.domain.team.repository.TeamRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +31,7 @@ public class TeamService {
     private final UserRepository userRepository;
 
     @Transactional
-    public TeamResponse createTeam(AuthUser authUser, TeamRequest request) {
+    public TeamDetailResponse createTeam(AuthUser authUser, TeamRequest request) {
 
         // 인증된 사용자 정보가 유효하지 않을 경우 NOT_LOGGED_IN(401)로 응답
         User me = userRepository.findById(authUser.getId())
@@ -51,7 +55,7 @@ public class TeamService {
     }
 
     @Transactional(readOnly = true)
-    public List<TeamResponse> getAllTeam() {
+    public List<TeamDetailResponse> getAllTeam() {
 
         List<Team> teams = teamRepository.findAllByDeletedAtIsNull();
 
@@ -61,7 +65,7 @@ public class TeamService {
     }
 
     @Transactional(readOnly = true)
-    public TeamResponse getOneTeam(Long id) {
+    public TeamDetailResponse getOneTeam(Long id) {
 
         Team foundTeam = teamRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
@@ -70,7 +74,7 @@ public class TeamService {
     }
 
     @Transactional
-    public TeamResponse updateTeam(AuthUser authUser, Long id, TeamRequest request) {
+    public TeamDetailResponse updateTeam(AuthUser authUser, Long id, TeamRequest request) {
 
         Team foundTeam = teamRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
@@ -113,13 +117,40 @@ public class TeamService {
         foundTeam.softDelete();
     }
 
+    @Transactional
+    public TeamResponse createTeamMember(Long teamId, @Valid TeamCreateMemberRequest request) {
+
+        // 팀 조회
+        Team foundTeam = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+
+        // 추가할 멤버 조회
+        User targetUser = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 소속 체크
+        Team current = targetUser.getTeam();
+        if (current != null) {
+            throw new CustomException(ErrorCode.ALREADY_IN_TEAM);
+        }
+
+        targetUser.joinTeam(foundTeam);
+        userRepository.save(targetUser);
+
+        List<TeamMemberDto> members = userRepository.findByTeamId(teamId).stream()
+                .map(TeamMemberDto::from)
+                .toList();
+
+        return TeamResponse.fromMembers(TeamDto.from(foundTeam), members);
+    }
+
     // 헬퍼 메서드
-    private TeamResponse toTeamResponse(Team team) {
+    private TeamDetailResponse toTeamResponse(Team team) {
         List<User> users = userRepository.findByTeamId(team.getId());
         List<MemberDto> members = users.stream()
                 .map(MemberDto::from)
                 .toList();
 
-        return TeamResponse.from(TeamDto.from(team), members);
+        return TeamDetailResponse.fromDetail(TeamDto.from(team), members);
     }
 }
