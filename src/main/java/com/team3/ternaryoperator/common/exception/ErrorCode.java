@@ -40,9 +40,12 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
     COMMENT_FORBIDDEN_ONLY_USER(HttpStatus.FORBIDDEN, "댓글을 수정할 권한이 없습니다."),
     COMMENT_NOT_EXIST(HttpStatus.NOT_FOUND, "해당 작업에 댓글이 존재하지 않습니다."),
-    COMMENT_NOT_DELETE_AUTHORIZATION(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다.");
+    COMMENT_NOT_DELETE_AUTHORIZATION(HttpStatus.FORBIDDEN, "댓글을 삭제할 권한이 없습니다."),
 
     // Activity 관련 ErrorCode
+
+    // Search 관련 ErrorCode
+    SEARCH_QUERY_EMPTY(HttpStatus.BAD_REQUEST, "검색어를 입력해주세요.");
 
     private final HttpStatus status;
     private final String message;
