@@ -1,7 +1,9 @@
-package com.team3.ternaryoperator.common.util;
+package com.team3.ternaryoperator.common.security;
 
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -43,22 +45,6 @@ public class JwtUtil {
                 .setExpiration(expiry)
                 .signWith(key, signatureAlgorithm)
                 .compact();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            log.warn("만료된 JWT 토큰", e);
-            return false;
-        } catch (JwtException | IllegalArgumentException e) {
-            log.warn("유효하지 않은 JWT 토큰", e);
-            return false;
-        }
     }
 
     public Claims getClaims(String token) {
