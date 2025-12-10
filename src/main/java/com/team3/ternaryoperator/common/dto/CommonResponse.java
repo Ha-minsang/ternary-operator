@@ -30,6 +30,10 @@ public class CommonResponse<T> {
         return new CommonResponse<>(false, errorCode.getMessage(), null, LocalDateTime.now());
     }
 
+    public static <T> CommonResponse<T> fail(String message) {
+        return new CommonResponse<>(false, message, null, LocalDateTime.now());
+    }
+
     // 메세지를 직접 입력하는 경우
     public static <T> CommonResponse<T> fail(ErrorCode errorCode, String message) {
         return new CommonResponse<>(
