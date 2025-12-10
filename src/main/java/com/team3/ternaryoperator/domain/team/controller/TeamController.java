@@ -84,4 +84,15 @@ public class TeamController {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 멤버 조회 성공"));
     }
+
+    @DeleteMapping("/{teamId}/members/{userId}")
+    public ResponseEntity<CommonResponse<Void>> deleteTeamMemberApi(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long teamId,
+            @PathVariable Long userId) {
+
+        teamService.deleteTeamMember(authUser, teamId, userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(null, "팀 멤버가 제거되었습니다."));
+    }
 }

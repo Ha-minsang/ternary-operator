@@ -80,7 +80,7 @@ public class TeamService {
         Team foundTeam = getTeamOrThrow(id);
 
         // 수정 권한 확인
-        boolean isMember = userRepository.existsByIdAndTeamId(authUser.getId(), id);
+        boolean isMember = userRepository.existsByIdAndTeam_Id(authUser.getId(), id);
         if (!isMember) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TEAM_UPDATE);
         }
@@ -99,13 +99,13 @@ public class TeamService {
         Team foundTeam = getTeamOrThrow(id);
 
         // 삭제 권한 확인
-        boolean isMember = userRepository.existsByIdAndTeamId(authUser.getId(), id);
+        boolean isMember = userRepository.existsByIdAndTeam_Id(authUser.getId(), id);
         if (!isMember) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TEAM_DELETE);
         }
 
         // 팀 멤버 수 확인
-        long memberCount = userRepository.countByTeamId(id);
+        long memberCount = userRepository.countByTeam_Id(id);
         if (memberCount > 1) {
             throw new CustomException(ErrorCode.EXIST_MEMBER);
         }
@@ -156,6 +156,28 @@ public class TeamService {
         return members.stream()
                 .map(TeamGetMemberResponse::from)
                 .toList();
+    }
+
+    @Transactional
+    public void deleteTeamMember(AuthUser authUser, Long teamId, Long userId) {
+
+        getTeamOrThrow(teamId);
+
+        User target = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+
+        // 유저가 이 팀 소속이 아닌 경우
+        if (target.getTeam() == null || !target.getTeam().getId().equals(teamId)) {
+            throw new CustomException(ErrorCode.TEAM_NOT_FOUND);
+        }
+
+        // 제거 권한 확인
+        if (!authUser.getId().equals(userId)) {
+            throw new CustomException(ErrorCode.NO_PERMISSION_TEAM_MEMBER_DELETE);
+        }
+
+        target.changeTeam(null);
+        userRepository.save(target);
     }
 
     // 헬퍼 메서드
