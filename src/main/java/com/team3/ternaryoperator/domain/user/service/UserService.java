@@ -111,7 +111,7 @@ public class UserService {
         if (!authUser.getId().equals(id)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
-        List<Task> tasks = taskRepository.findAllByUserId(id);
+        List<Task> tasks = taskRepository.findAllByAssigneeId(id);
         for (Task task : tasks) {
             task.softDelete();
         }

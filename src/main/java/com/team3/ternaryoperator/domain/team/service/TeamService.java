@@ -37,7 +37,7 @@ public class TeamService {
 
         // 인증된 사용자 정보가 유효하지 않을 경우 NOT_LOGGED_IN(401)로 응답
         User me = userRepository.findById(authUser.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_LOGGED_IN));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         String name = request.getName();
         String description = request.getDescription();
