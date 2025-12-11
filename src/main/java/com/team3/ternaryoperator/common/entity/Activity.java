@@ -26,4 +26,10 @@ public class Activity extends BaseEntity {
 
     @Column
     private Long taskId;
+
+    public Activity(ActivityType activityType, Long userId, Long taskId) {
+        this.activityType = activityType;
+        this.userId = userId;
+        this.taskId = taskId;
+    }
 }
