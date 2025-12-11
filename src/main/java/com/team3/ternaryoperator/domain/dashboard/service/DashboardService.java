@@ -1,15 +1,16 @@
 package com.team3.ternaryoperator.domain.dashboard.service;
 
-import com.team3.ternaryoperator.domain.dashboard.model.response.WeeklyTrendItemResponse;
-import com.team3.ternaryoperator.domain.dashboard.model.response.WeeklyTrendResponse;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.domain.dashboard.model.dto.DashboardTaskSummaryDto;
+import com.team3.ternaryoperator.domain.dashboard.model.response.DashboardStatsResponse;
 import com.team3.ternaryoperator.domain.dashboard.model.response.MyTaskSummaryResponse;
+import com.team3.ternaryoperator.domain.dashboard.model.response.WeeklyTrendItemResponse;
 import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,6 +24,13 @@ public class DashboardService {
 
     private static final List<String> WEEKDAYS = List.of("월", "화", "수", "목", "금", "토", "일");
 
+    // 대시보드 통계
+    @Transactional(readOnly = true)
+    public DashboardStatsResponse getDashboardStats(AuthUser authUser) {
+        return taskRepository.findDashboardCounts(authUser.getId());
+    }
+
+    // 주간 작업 추세
     public List<WeeklyTrendItemResponse> getWeeklyTrend() {
 
         LocalDate today = LocalDate.now();
@@ -46,10 +54,10 @@ public class DashboardService {
                     target.toString()
             ));
         }
-
         return result;
     }
-  
+
+    // 내 작업 요약
     public MyTaskSummaryResponse getMyTaskSummary(AuthUser authUser) {
         List<Task> tasks = taskRepository.findAllByAssigneeId(authUser.getId());
 

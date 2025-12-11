@@ -1,13 +1,14 @@
 package com.team3.ternaryoperator.domain.user.service;
 
 import com.team3.ternaryoperator.common.dto.AuthUser;
+import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
+import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import com.team3.ternaryoperator.domain.user.model.dto.UserDto;
 import com.team3.ternaryoperator.domain.user.model.request.UserCreateRequest;
-import com.team3.ternaryoperator.domain.user.model.request.UserDeleteRequest;
 import com.team3.ternaryoperator.domain.user.model.request.UserUpdateRequest;
 import com.team3.ternaryoperator.domain.user.model.response.UserDetailResponse;
 import com.team3.ternaryoperator.domain.user.model.response.UserResponse;
@@ -25,6 +26,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final TaskRepository taskRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -82,7 +84,7 @@ public class UserService {
         }
 
         if (!authUser.getId().equals(id)) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED);
+            throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -102,18 +104,17 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(AuthUser authUser, Long id, @Valid UserDeleteRequest request) {
+    public void deleteUser(AuthUser authUser, Long id) {
 
         User user = getUserByIdOrThrow(id);
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
-        }
-
         if (!authUser.getId().equals(id)) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED);
+            throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
         }
-
+        List<Task> tasks = taskRepository.findAllByAssigneeId(id);
+        for (Task task : tasks) {
+            task.softDelete();
+        }
         user.softDelete();
     }
 
