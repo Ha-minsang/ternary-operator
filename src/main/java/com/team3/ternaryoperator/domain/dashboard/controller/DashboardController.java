@@ -5,7 +5,6 @@ import com.team3.ternaryoperator.common.dto.CommonResponse;
 import com.team3.ternaryoperator.domain.dashboard.model.response.DashboardStatsResponse;
 import com.team3.ternaryoperator.domain.dashboard.model.response.MyTaskSummaryResponse;
 import com.team3.ternaryoperator.domain.dashboard.model.response.WeeklyTrendItemResponse;
-import com.team3.ternaryoperator.domain.dashboard.model.response.WeeklyTrendResponse;
 import com.team3.ternaryoperator.domain.dashboard.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,13 +36,13 @@ public class DashboardController {
 
     // 주간 작업 추세
     @GetMapping("/weekly-trend")
-    public ResponseEntity<CommonResponse<WeeklyTrendResponse>> getWeeklyTrend() {
+    public ResponseEntity<CommonResponse<List<WeeklyTrendItemResponse>>> getWeeklyTrend() {
 
-        List<WeeklyTrendItemResponse> result = dashboardService.getWeeklyTrend();
+        List<WeeklyTrendItemResponse> response = dashboardService.getWeeklyTrend();
 
-        WeeklyTrendResponse response = new WeeklyTrendResponse(result);
-
-        return ResponseEntity.ok(CommonResponse.success(response, "주간 작업 추세 조회 성공"));
+        return ResponseEntity.ok(
+                CommonResponse.success(response, "주간 작업 추세 조회 성공")
+        );
     }
 
     // 내 작업 요약
