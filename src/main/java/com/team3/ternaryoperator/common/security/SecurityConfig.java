@@ -37,8 +37,8 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class
                 )
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
+//                        .authenticationEntryPoint(authenticationEntryPoint)
+                                .accessDeniedHandler(accessDeniedHandler)
                 )
                 .build();
     }
