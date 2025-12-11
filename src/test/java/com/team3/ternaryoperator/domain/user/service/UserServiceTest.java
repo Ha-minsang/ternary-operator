@@ -42,9 +42,9 @@ class UserServiceTest {
         // given
         UserCreateRequest request = new UserCreateRequest(
                 "testUsername",
-                "test@example.com",
-                "테스트유저",
-                "rawPassword"
+                "test@email.com",
+                "testPassword",
+                "testName"
         );
         String encodedPassword = "encodedPassword";
 
@@ -71,10 +71,10 @@ class UserServiceTest {
     void signUp_ShouldThrowException_WhenUsernameDuplicated() {
         // given
         UserCreateRequest request = new UserCreateRequest(
-                "duplicateUsername",
-                "test@example.com",
-                "테스트유저",
-                "rawPassword"
+                "testUsername",
+                "test@email.com",
+                "testPassword",
+                "testName"
         );
 
         given(userRepository.existsByUsername(request.getUsername())).willReturn(true);
@@ -94,9 +94,9 @@ class UserServiceTest {
         // given
         UserCreateRequest request = new UserCreateRequest(
                 "testUsername",
-                "duplicate@example.com",
-                "테스트유저",
-                "rawPassword"
+                "test@email.com",
+                "testPassword",
+                "testName"
         );
 
         given(userRepository.existsByUsername(request.getUsername())).willReturn(false);
