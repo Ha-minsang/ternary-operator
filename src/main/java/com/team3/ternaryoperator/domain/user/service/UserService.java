@@ -28,7 +28,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @TrackTime
     @Transactional
     public UserResponse signUp(UserCreateRequest request) {
 

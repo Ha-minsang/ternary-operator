@@ -21,19 +21,18 @@ public class Activity extends BaseEntity {
 
     private String type;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     private Long taskId;
     private String description;
     private LocalDateTime timestamp;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User actor;
-
-
-    public Activity(String type, User actor, Long taskId, String description) {
+    public Activity(String type,User user,Long taskId, String description) {
         this.type = type;
-        this.actor = actor;
+        this.user = user;
         this.taskId = taskId;
         this.description = description;
         this.timestamp = LocalDateTime.now();

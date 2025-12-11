@@ -1,5 +1,6 @@
 package com.team3.ternaryoperator.domain.task.service;
 
+import com.team3.ternaryoperator.common.aop.TrackTime;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.Task;
@@ -35,6 +36,7 @@ public class TaskService {
     private final UserRepository userRepository;
 
     // 작업 생성
+    @TrackTime(type = "TASK_CREATED")
     @Transactional
     public TaskResponse createTask(Long id, TaskCreateRequest request) {
         User assignee = getUserByIdOrThrow(id);
@@ -45,6 +47,7 @@ public class TaskService {
     }
 
     // 작업 수정
+    @TrackTime(type = "TASK_UPDATED")
     @Transactional
     public TaskResponse updateTask(Long userId, Long taskId, TaskUpdateRequest request) {
         User assignee = getUserByIdOrThrow(userId);
@@ -74,6 +77,7 @@ public class TaskService {
     }
 
     // 작업 삭제
+    @TrackTime(type = "TASK_DELETED")
     @Transactional
     public void deleteTask(AuthUser authUser, Long id) {
         Task task = getTaskByIdOrThrow(id);
@@ -83,6 +87,7 @@ public class TaskService {
     }
 
     // 작업 상태 변경
+    @TrackTime(type = "TASK_STATUS_CHANGED")
     public TaskGetResponse updateTaskStatus(AuthUser authUser, Long id, @Valid TaskStatusUpdateRequest request) {
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(authUser.getId());

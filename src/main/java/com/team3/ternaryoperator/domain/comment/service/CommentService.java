@@ -1,5 +1,6 @@
 package com.team3.ternaryoperator.domain.comment.service;
 
+import com.team3.ternaryoperator.common.aop.TrackTime;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.Comment;
@@ -35,6 +36,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
 
+    @TrackTime(type = "COMMENT_CREATED")
     @Transactional
     public CommentResponse createComment(Long taskId, Long userId, CommentCreateRequest request) {
 
@@ -86,6 +88,7 @@ public class CommentService {
         return PageResponse.from(mapped);
     }
 
+    @TrackTime(type = "COMMENT_UPDATED")
     @Transactional
     public CommentUpdateResponse updateComment(Long taskId, Long commentId, Long userId, CommentUpdateRequest request) {
 
@@ -107,6 +110,7 @@ public class CommentService {
         return CommentUpdateResponse.from(dto);
     }
 
+    @TrackTime(type = "COMMENT_DELETED")
     @Transactional
     public void deleteComment(Long taskId, Long commentId, AuthUser authUser) {
 
