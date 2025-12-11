@@ -3,7 +3,6 @@ package com.team3.ternaryoperator.domain.user.controller;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.CommonResponse;
 import com.team3.ternaryoperator.domain.user.model.request.UserCreateRequest;
-import com.team3.ternaryoperator.domain.user.model.request.UserDeleteRequest;
 import com.team3.ternaryoperator.domain.user.model.request.UserUpdateRequest;
 import com.team3.ternaryoperator.domain.user.model.response.UserDetailResponse;
 import com.team3.ternaryoperator.domain.user.model.response.UserResponse;
@@ -67,10 +66,9 @@ public class UserController {
     @DeleteMapping("{id}")
     public ResponseEntity<CommonResponse<Void>> deleteUser(
             @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable Long id,
-            @Valid @RequestBody UserDeleteRequest request
+            @PathVariable Long id
     ) {
-        userService.deleteUser(authUser, id, request);
+        userService.deleteUser(authUser, id);
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(null, "회원 탈퇴가 완료되었습니다."));
     }
 

@@ -32,7 +32,7 @@ public class TaskController {
             @AuthenticationPrincipal AuthUser authUser,
             @Valid @RequestBody TaskCreateRequest request
     ) {
-        TaskResponse response =  taskService.createTask(authUser.getId(), request);
+        TaskResponse response =  taskService.createTask(authUser, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(CommonResponse.success(response, "작업이 생성되었습니다."));
@@ -45,7 +45,7 @@ public class TaskController {
             @PathVariable Long id,
             @Valid @RequestBody TaskUpdateRequest request
     ) {
-        TaskResponse response = taskService.updateTask(authUser.getId(), id, request);
+        TaskResponse response = taskService.updateTask(authUser, id, request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(CommonResponse.success(response, "작업이 수정되었습니다."));

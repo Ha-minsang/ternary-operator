@@ -25,7 +25,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import static com.team3.ternaryoperator.common.exception.ErrorCode.*;
 
 @Service
@@ -38,8 +37,8 @@ public class TaskService {
     // 작업 생성
     @TrackTime(type = "TASK_CREATED")
     @Transactional
-    public TaskResponse createTask(Long id, TaskCreateRequest request) {
-        User assignee = getUserByIdOrThrow(id);
+    public TaskResponse createTask(AuthUser authUser, TaskCreateRequest request) {
+        User assignee = getUserByIdOrThrow(authUser.getId());
         TaskPriority taskPriority = TaskPriority.valueOf(request.getPriority());
         Task task = taskRepository.save(new Task(request.getTitle(), request.getDescription(), TaskStatus.TODO, taskPriority, assignee, request.getDueDate()));
         TaskDto dto = TaskDto.from(task);
@@ -49,11 +48,12 @@ public class TaskService {
     // 작업 수정
     @TrackTime(type = "TASK_UPDATED")
     @Transactional
-    public TaskResponse updateTask(Long userId, Long taskId, TaskUpdateRequest request) {
-        User assignee = getUserByIdOrThrow(userId);
+    public TaskResponse updateTask(AuthUser authUser, Long taskId, TaskUpdateRequest request) {
+        User assignee = getUserByIdOrThrow(authUser.getId());
         Task task = getTaskByIdOrThrow(taskId);
+        User newAssignee = getUserByIdOrThrow(request.getAssigneeId());
         matchedAssignee(assignee.getId(), task.getAssignee().getId());
-        task.update(request);
+        task.update(request, newAssignee);
         taskRepository.save(task);
         TaskDto dto = TaskDto.from(task);
         return TaskResponse.from(dto);
@@ -88,6 +88,7 @@ public class TaskService {
 
     // 작업 상태 변경
     @TrackTime(type = "TASK_STATUS_CHANGED")
+    @Transactional
     public TaskGetResponse updateTaskStatus(AuthUser authUser, Long id, @Valid TaskStatusUpdateRequest request) {
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(authUser.getId());
