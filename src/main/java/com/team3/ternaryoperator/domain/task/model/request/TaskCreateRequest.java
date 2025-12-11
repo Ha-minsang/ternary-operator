@@ -3,6 +3,7 @@ package com.team3.ternaryoperator.domain.task.model.request;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class TaskCreateRequest {
 
     @NotBlank(message = "제목을 작성해주세요.")
