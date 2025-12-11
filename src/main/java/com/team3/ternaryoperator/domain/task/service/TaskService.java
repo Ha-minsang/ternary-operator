@@ -24,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import static com.team3.ternaryoperator.common.exception.ErrorCode.*;
 
 @Service
@@ -84,6 +83,7 @@ public class TaskService {
     }
 
     // 작업 상태 변경
+    @Transactional
     public TaskGetResponse updateTaskStatus(AuthUser authUser, Long id, @Valid TaskStatusUpdateRequest request) {
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(authUser.getId());
