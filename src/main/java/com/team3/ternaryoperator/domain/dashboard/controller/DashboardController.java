@@ -7,6 +7,11 @@ import com.team3.ternaryoperator.domain.dashboard.model.response.WeeklyTrendResp
 import com.team3.ternaryoperator.domain.dashboard.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import com.team3.ternaryoperator.domain.dashboard.model.response.MyTaskSummaryResponse;
+import com.team3.ternaryoperator.domain.dashboard.service.DashboardService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,4 +35,13 @@ public class DashboardController {
         return ResponseEntity.ok(CommonResponse.success(response, "주간 작업 추세 조회 성공"));
     }
 
+    @GetMapping("/tasks")
+    public ResponseEntity<CommonResponse<MyTaskSummaryResponse>> getMyTaskSummary(
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
+        MyTaskSummaryResponse summary = dashboardService.getMyTaskSummary(authUser);
+        return ResponseEntity.ok(
+                CommonResponse.success(summary, "내 작업 요약 조회 성공")
+        );
+    }
 }
