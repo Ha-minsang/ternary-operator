@@ -33,8 +33,8 @@ public interface TaskRepository extends JpaRepository<Task, Long>, TaskRepositor
            SUM(CASE WHEN task.status = 'IN_PROGRESS' THEN 1L ELSE 0L END),
            SUM(CASE WHEN task.status = 'TODO' THEN 1L ELSE 0L END),
            SUM(CASE WHEN task.status != 'DONE' AND task.dueDate < NOW() THEN 1L ELSE 0L END),
-           CAST(ROUND(((SUM(CASE WHEN task.assignee.team.id = user.team.id AND task.status = 'DONE' THEN 1 ELSE 0 END) / count(*)) * 100), 2) AS double),
-           CAST(ROUND(((SUM(CASE WHEN task.assignee.id = :userId AND task.status = 'DONE' THEN 1 ELSE 0 END) / count(*)) * 100), 2) AS double)
+           CAST(ROUND(((SUM(CASE WHEN task.assignee.team.id = user.team.id AND task.status = 'DONE' THEN 1 ELSE 0 END) / (count(*)*1.0)) * 100), 2) AS double),
+           CAST(ROUND(((SUM(CASE WHEN task.assignee.id = :userId AND task.status = 'DONE' THEN 1 ELSE 0 END) / (count(*)*1.0)) * 100), 2) AS double)
     )
     FROM Task task
     LEFT JOIN FETCH User user
