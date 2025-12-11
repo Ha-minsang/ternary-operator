@@ -16,8 +16,9 @@ public class ActivityService {
 
     @Async
     @Transactional
-    public void saveActivity(ActivityType type, Long userId, Long taskId) {
-        Activity activity = new Activity(type, userId, taskId);
+    public void saveActivity(ActivityType type, Long userId, Long taskId, String taskTitle) {
+        String description = type.createDescription(taskTitle);
+        Activity activity = new Activity(type, userId, taskId, description);
         activityRepository.save(activity);
     }
 }

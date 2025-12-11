@@ -1,10 +1,13 @@
 package com.team3.ternaryoperator.domain.task.service;
 
+import com.team3.ternaryoperator.common.aspect.ActivityLog;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
+import com.team3.ternaryoperator.domain.activity.enums.ActivityType;
+import com.team3.ternaryoperator.domain.activity.service.ActivityService;
 import com.team3.ternaryoperator.domain.task.enums.TaskPriority;
 import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
 import com.team3.ternaryoperator.domain.task.model.dto.TaskDto;
@@ -32,19 +35,23 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final ActivityService activityService;
 
     // 작업 생성
     @Transactional
+    @ActivityLog
     public TaskResponse createTask(AuthUser authUser, TaskCreateRequest request) {
         User assignee = getUserByIdOrThrow(authUser.getId());
         TaskPriority taskPriority = TaskPriority.valueOf(request.getPriority());
         Task task = taskRepository.save(new Task(request.getTitle(), request.getDescription(), TaskStatus.TODO, taskPriority, assignee, request.getDueDate()));
         TaskDto dto = TaskDto.from(task);
+        activityService.saveActivity(ActivityType.TASK_CREATED, authUser.getId(), task.getId(), task.getTitle());
         return TaskResponse.from(dto);
     }
 
     // 작업 수정
     @Transactional
+    @ActivityLog
     public TaskResponse updateTask(AuthUser authUser, Long taskId, TaskUpdateRequest request) {
         User assignee = getUserByIdOrThrow(authUser.getId());
         Task task = getTaskByIdOrThrow(taskId);
@@ -53,6 +60,7 @@ public class TaskService {
         task.update(request, newAssignee);
         taskRepository.save(task);
         TaskDto dto = TaskDto.from(task);
+        activityService.saveActivity(ActivityType.TASK_UPDATED, authUser.getId(), task.getId(), task.getTitle());
         return TaskResponse.from(dto);
     }
 
@@ -75,15 +83,18 @@ public class TaskService {
 
     // 작업 삭제
     @Transactional
+    @ActivityLog
     public void deleteTask(AuthUser authUser, Long id) {
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(authUser.getId());
         matchedAssignee(assignee.getId(), task.getAssignee().getId());
+        activityService.saveActivity(ActivityType.TASK_DELETED, authUser.getId(), task.getId(), task.getTitle());
         task.softDelete();
     }
 
     // 작업 상태 변경
     @Transactional
+    @ActivityLog
     public TaskGetResponse updateTaskStatus(AuthUser authUser, Long id, @Valid TaskStatusUpdateRequest request) {
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(authUser.getId());
@@ -92,6 +103,7 @@ public class TaskService {
         task.changeStatus(newStatus);
         taskRepository.save(task);
         TaskDto dto = TaskDto.from(task);
+        activityService.saveActivity(ActivityType.TASK_STATUS_CHANGED, authUser.getId(), task.getId(), task.getTitle());
         return TaskGetResponse.from(dto, AssigneeResponse.from(assignee));
     }
 
@@ -111,7 +123,7 @@ public class TaskService {
 
     // 담당자 일치 확인
     private void matchedAssignee(Long assigneeId, Long taskUserId) {
-        if(!assigneeId.equals(taskUserId)) {
+        if (!assigneeId.equals(taskUserId)) {
             throw new CustomException(TASK_FORBIDDEN_ONLY_ASSIGNEE);
         }
     }
