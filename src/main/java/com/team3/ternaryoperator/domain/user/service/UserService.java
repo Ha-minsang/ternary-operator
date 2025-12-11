@@ -84,7 +84,7 @@ public class UserService {
         }
 
         if (!authUser.getId().equals(id)) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED);
+            throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -109,9 +109,9 @@ public class UserService {
         User user = getUserByIdOrThrow(id);
 
         if (!authUser.getId().equals(id)) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED);
+            throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
         }
-        List<Task> tasks = taskRepository.findAllByUserId(id);
+        List<Task> tasks = taskRepository.findAllByAssigneeId(id);
         for (Task task : tasks) {
             task.softDelete();
         }
