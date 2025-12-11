@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class DashboardStatsResponse {
-    private final Long totalTask;
+    private final Long totalTasks;
     private final Long completedTasks;
     private final Long inProgressTasks;
     private final Long todoTasks;
@@ -15,7 +15,7 @@ public class DashboardStatsResponse {
     private final Double completionRate;
 
     public static DashboardStatsResponse from(
-            Long totalTask,
+            Long totalTasks,
             Long completedTasks,
             Long inProgressTasks,
             Long todoTasks,
@@ -24,7 +24,7 @@ public class DashboardStatsResponse {
             Double completionRate
     ) {
         return new DashboardStatsResponse(
-                totalTask,
+                totalTasks,
                 completedTasks,
                 inProgressTasks,
                 todoTasks,
