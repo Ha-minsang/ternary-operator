@@ -35,6 +35,16 @@ public class CommentGetDto {
         private final UserRole role;
 
         public static UserInfo from(User user) {
+
+            if (user == null) {
+                return new UserInfo(null,
+                        null,
+                        "(삭제된 유저)",
+                        null,
+                        null
+                );
+            }
+
             return new UserInfo(
                     user.getId(),
                     user.getUsername(),
@@ -50,7 +60,7 @@ public class CommentGetDto {
                 comment.getId(),
                 comment.getContent(),
                 comment.getTask().getId(),
-                comment.getUser().getId(),
+                comment.getUser() != null ? comment.getUser().getId() : null,
                 UserInfo.from(comment.getUser()),
                 comment.getParentComment() != null ? comment.getParentComment().getId() : null,
                 comment.getCreatedAt(),
