@@ -87,14 +87,14 @@ public class UserService {
             throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
         }
 
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (!(request.getEmail().equals(user.getEmail())) && userRepository.existsByEmail(request.getEmail())) {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
 
-        if (request.getName() != null) {
+        if (!request.getName().equals(user.getName())) {
             user.updateName(request.getName());
         }
-        if (request.getEmail() != null) {
+        if (!request.getEmail().equals(user.getEmail())) {
             user.updateEmail(request.getEmail());
         }
 
@@ -119,8 +119,8 @@ public class UserService {
     }
 
     @Transactional
-    public List<UserResponse> getAvailableUsers(Long teamId) {
-        List<User> userList = userRepository.findByTeamIdNot(teamId);
+    public List<UserResponse> getAvailableUsers() {
+        List<User> userList = userRepository.findAllByTeamIsNull();
         List<UserDto> userDtoList = userList.stream()
                 .map(UserDto::from)
                 .toList();
@@ -131,8 +131,7 @@ public class UserService {
     }
 
     private User getUserByIdOrThrow(Long id) {
-        User user = userRepository.findById(id)
+        return userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return user;
     }
 }

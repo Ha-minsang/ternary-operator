@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-    List<User> findByTeamIdNot(Long teamId);
+    List<User> findAllByTeamIsNull();
 
     List<User> findByTeamId(Long teamId);
 
