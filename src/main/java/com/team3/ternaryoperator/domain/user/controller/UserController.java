@@ -76,7 +76,7 @@ public class UserController {
     public ResponseEntity<CommonResponse<List<UserResponse>>> getAvailableUsers(
             @RequestParam(required = false) Long teamId
     ) {
-        List<UserResponse> response = userService.getAvailableUsers(teamId);
+        List<UserResponse> response = userService.getAvailableUsers();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponse.success(response, "추가 가능한 사용자 목록 조회 성공"));
     }

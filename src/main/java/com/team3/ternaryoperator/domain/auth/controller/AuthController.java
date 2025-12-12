@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<CommonResponse<LoginResponse>> login(
             @RequestBody LoginRequest request
     ) {
@@ -30,7 +30,7 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success(response, "로그인 성공."));
     }
 
-    @PostMapping("/verify-password")
+    @PostMapping("/users/verify-password")
     public ResponseEntity<CommonResponse<VerifyPasswordResponse>> checkPassword(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody VerifyPasswordRequest request
