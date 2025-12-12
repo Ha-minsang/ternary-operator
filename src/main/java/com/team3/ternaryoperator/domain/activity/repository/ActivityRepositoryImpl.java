@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team3.ternaryoperator.common.entity.Activity;
 import com.team3.ternaryoperator.common.entity.QActivity;
+import com.team3.ternaryoperator.domain.activity.enums.ActivityType;
 import com.team3.ternaryoperator.domain.activity.model.condition.ActivitySearchCond;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,8 +29,8 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
         QActivity activity = QActivity.activity;
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (cond.getActivityType() != null) {
-            builder.and(activity.activityType.eq(cond.getActivityType()));
+        if (cond.getType() != null) {
+            builder.and(activity.activityType.eq(ActivityType.valueOf(cond.getType())));
         }
 
         if (cond.getTaskId() != null) {

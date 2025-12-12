@@ -1,6 +1,5 @@
 package com.team3.ternaryoperator.domain.activity.model.condition;
 
-import com.team3.ternaryoperator.domain.activity.enums.ActivityType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ActivitySearchCond {
 
-    private ActivityType activityType;
+    private String type;
     private Long taskId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
