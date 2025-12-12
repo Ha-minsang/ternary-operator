@@ -19,14 +19,14 @@ import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -64,28 +64,66 @@ public class CommentService {
         return CommentResponse.from(CommentDto.from(saved));
     }
 
-    public PageResponse<CommentGetResponse> getComments(Long taskId, String sort, Pageable pageable) {
+    public PageResponse<CommentGetResponse> getComments(
+            Long taskId, String sort, Pageable pageable) {
 
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
 
+        // 댓글 정렬만 적용
         Sort sortOption = sort.equalsIgnoreCase("oldest")
                 ? Sort.by("createdAt").ascending()
                 : Sort.by("createdAt").descending();
 
-        Pageable finalPageable = PageRequest.of(
+        Pageable parentPageable = PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 sortOption
         );
 
-        Page<Comment> comments = commentRepository.findByTask(task, finalPageable);
+        Page<Comment> parentPage =
+                commentRepository.findParentCommentsByTask(task, parentPageable);
 
-        // commentPage.map(comment -> CommentResponse.from(comment)) 과 동일하다
-        Page<CommentGetResponse> mapped = comments
-                .map(comment -> CommentGetResponse.from(CommentGetDto.from(comment)));
+        List<Long> parentIds = parentPage.getContent().stream()
+                .map(Comment::getId)
+                .toList();
 
-        return PageResponse.from(mapped);
+        // 자식이 없는 경우: 그대로 반환
+        if (parentIds.isEmpty()) {
+            return PageResponse.from(parentPage.map(c ->
+                    CommentGetResponse.from(CommentGetDto.from(c))));
+        }
+
+        // 페이징된 parent들의 자식 대댓글 전체 조회
+        List<Comment> replies =
+                commentRepository.findRepliesByParentIds(parentIds);
+
+        // parentId별 그룹핑
+        Map<Long, List<Comment>> repliesMap = replies.stream()
+                .collect(Collectors.groupingBy(comment -> comment.getParentComment().getId()));
+
+        List<CommentGetResponse> flatList = new ArrayList<>();
+
+        for (Comment parent : parentPage.getContent()) {
+
+            // 부모 댓글 추가
+            flatList.add(CommentGetResponse.from(CommentGetDto.from(parent)));
+
+            // 대댓글 최신순 정렬 추가
+            List<Comment> children = repliesMap.getOrDefault(parent.getId(), List.of());
+
+            for (Comment child : children) {
+                flatList.add(CommentGetResponse.from(CommentGetDto.from(child)));
+            }
+        }
+
+        Page<CommentGetResponse> resultPage = new PageImpl<>(
+                flatList,
+                pageable,
+                parentPage.getTotalElements() // 부모 댓글 개수가 전체 개수
+        );
+
+        return PageResponse.from(resultPage);
     }
 
     @Transactional
