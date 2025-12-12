@@ -50,17 +50,16 @@ public class UserService {
                 UserRole.USER,
                 null
         );
-
         User saved = userRepository.save(user);
-        UserDto userDto = UserDto.from(saved);
-        return UserResponse.from(userDto);
+
+        return UserResponse.from(UserDto.from(saved));
     }
 
     @Transactional(readOnly = true)
     public UserDetailResponse getUser(Long id) {
         User user = getUserByIdOrThrow(id);
-        UserDto userDto = UserDto.from(user);
-        return UserDetailResponse.from(userDto);
+
+        return UserDetailResponse.from(UserDto.from(user));
     }
 
     @Transactional(readOnly = true)
@@ -99,8 +98,8 @@ public class UserService {
         }
 
         userRepository.flush();
-        UserDto userDto = UserDto.from(user);
-        return UserDetailResponse.from(userDto);
+
+        return UserDetailResponse.from(UserDto.from(user));
     }
 
     @Transactional

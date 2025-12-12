@@ -8,6 +8,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CommentUpdateRequest {
 
-    @NotBlank(message = "내용은 비어 있을 수 없습니다.")
+    @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 }

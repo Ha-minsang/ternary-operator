@@ -34,7 +34,9 @@ public class CommentController {
 
         CommentResponse response = commentService.createComment(taskId, userId, request);
 
-        return ResponseEntity.ok(CommonResponse.success(response, "댓글이 작성되었습니다."));
+        return ResponseEntity
+                .ok(CommonResponse
+                        .success(response, "댓글이 작성되었습니다."));
     }
 
     @GetMapping("/{taskId}/comments")
@@ -45,7 +47,9 @@ public class CommentController {
             ) {
         PageResponse<CommentGetResponse> response = commentService.getComments(taskId, sort, pageable);
 
-        return ResponseEntity.ok(CommonResponse.success(response, "댓글 목록을 조회했습니다."));
+        return ResponseEntity
+                .ok(CommonResponse
+                        .success(response, "댓글 목록을 조회했습니다."));
     }
 
     @PutMapping("/{taskId}/comments/{commentId}")
@@ -59,7 +63,9 @@ public class CommentController {
         Long userId = authUser.getId();
         CommentUpdateResponse response = commentService.updateComment(taskId, commentId, userId, request);
 
-        return ResponseEntity.ok(CommonResponse.success(response, "댓글이 수정되었습니다."));
+        return ResponseEntity
+                .ok(CommonResponse
+                        .success(response, "댓글이 수정되었습니다."));
     }
 
     @DeleteMapping("/{taskId}/comments/{commentId}")
@@ -71,6 +77,8 @@ public class CommentController {
 
         commentService.deleteComment(taskId, commentId, authUser);
 
-        return ResponseEntity.ok(CommonResponse.success(null, "댓글이 삭제되었습니다."));
+        return ResponseEntity
+                .ok(CommonResponse
+                        .success(null, "댓글이 삭제되었습니다."));
     }
 }

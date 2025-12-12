@@ -33,9 +33,11 @@ public class TaskController {
             @Valid @RequestBody TaskCreateRequest request
     ) {
         TaskResponse response =  taskService.createTask(authUser, request);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(CommonResponse.success(response, "작업이 생성되었습니다."));
+                .body(CommonResponse
+                        .success(response, "작업이 생성되었습니다."));
     }
 
     // 작업 수정
@@ -46,9 +48,11 @@ public class TaskController {
             @Valid @RequestBody TaskUpdateRequest request
     ) {
         TaskResponse response = taskService.updateTask(authUser, id, request);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success(response, "작업이 수정되었습니다."));
+                .body(CommonResponse
+                        .success(response, "작업이 수정되었습니다."));
     }
 
     // 작업 상세 조회
@@ -57,9 +61,11 @@ public class TaskController {
             @PathVariable Long id
     ) {
         TaskDetailResponse response = taskService.getOneTask(id);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success(response, "작업 조회 성공"));
+                .body(CommonResponse
+                        .success(response, "작업 조회 성공"));
     }
 
     // 작업 목록 조회(페이징, 필터링)
@@ -71,9 +77,11 @@ public class TaskController {
             @PageableDefault(page = 0, size = 10) Pageable pageable
             ) {
         PageResponse<TaskGetResponse> response = taskService.getAllTask(status, search, assigneeId, pageable);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success(response, "작업 목록 조회 성공"));
+                .body(CommonResponse
+                        .success(response, "작업 목록 조회 성공"));
     }
 
     // 작업 삭제
@@ -83,9 +91,11 @@ public class TaskController {
             @PathVariable Long id
     ) {
         taskService.deleteTask(authUser, id);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success(null, "작업이 삭제되었습니다."));
+                .body(CommonResponse
+                        .success(null, "작업이 삭제되었습니다."));
     }
 
     // 작업 상태 변경
@@ -96,8 +106,10 @@ public class TaskController {
             @Valid @RequestBody TaskStatusUpdateRequest request
     ) {
         TaskGetResponse response = taskService.updateTaskStatus(authUser, id, request);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success(response, "작업 상태가 변경되었습니다."));
+                .body(CommonResponse
+                        .success(response, "작업 상태가 변경되었습니다."));
     }
 }

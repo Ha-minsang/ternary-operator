@@ -9,11 +9,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class TeamRequest {
 
-    @NotBlank(message = "팀 이름은 필수입니다.")
+    @NotBlank(message = "팀 이름을 입력해주세요.")
     @Size(max = 30)
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "설명을 입력해주세요.")
     @Size(max = 255)
     private String description;
 }

@@ -29,9 +29,11 @@ public class DashboardController {
             @AuthenticationPrincipal AuthUser authUser
     ) {
         DashboardStatsResponse response = dashboardService.getDashboardStats(authUser);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success(response, "대시보드 통계 조회 성공"));
+                .body(CommonResponse
+                        .success(response, "대시보드 통계 조회 성공"));
     }
 
     // 주간 작업 추세
@@ -41,7 +43,8 @@ public class DashboardController {
         List<WeeklyTrendItemResponse> response = dashboardService.getWeeklyTrend();
 
         return ResponseEntity.ok(
-                CommonResponse.success(response, "주간 작업 추세 조회 성공")
+                CommonResponse
+                        .success(response, "주간 작업 추세 조회 성공")
         );
     }
 
@@ -51,8 +54,10 @@ public class DashboardController {
             @AuthenticationPrincipal AuthUser authUser
     ) {
         MyTaskSummaryResponse summary = dashboardService.getMyTaskSummary(authUser);
+
         return ResponseEntity.ok(
-                CommonResponse.success(summary, "내 작업 요약 조회 성공")
+                CommonResponse
+                        .success(summary, "내 작업 요약 조회 성공")
         );
     }
 }

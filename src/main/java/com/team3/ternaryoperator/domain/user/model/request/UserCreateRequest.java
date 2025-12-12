@@ -9,16 +9,16 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UserCreateRequest {
 
-    @NotBlank
+    @NotBlank(message = "유저를 입력해주세요.")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "이메일을 입력해주세요.")
     @Email(message = "올바른 이메일 형식이 아닙니다.")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "이름을 입력해주세요.")
     private String name;
 }

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TeamCreateMemberRequest {
 
-    @NotNull
+    @NotNull(message = "이름을 입력해주세요.")
     private Long userId;
 }

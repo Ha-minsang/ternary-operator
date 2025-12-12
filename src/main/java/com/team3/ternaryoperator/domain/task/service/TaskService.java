@@ -39,8 +39,8 @@ public class TaskService {
         User assignee = getUserByIdOrThrow(authUser.getId());
         TaskPriority taskPriority = TaskPriority.valueOf(request.getPriority());
         Task task = taskRepository.save(new Task(request.getTitle(), request.getDescription(), TaskStatus.TODO, taskPriority, assignee, request.getDueDate()));
-        TaskDto dto = TaskDto.from(task);
-        return TaskResponse.from(dto);
+
+        return TaskResponse.from(TaskDto.from(task));
     }
 
     // 작업 수정
@@ -52,8 +52,8 @@ public class TaskService {
         matchedAssignee(assignee.getId(), task.getAssignee().getId());
         task.update(request, newAssignee);
         taskRepository.save(task);
-        TaskDto dto = TaskDto.from(task);
-        return TaskResponse.from(dto);
+
+        return TaskResponse.from(TaskDto.from(task));
     }
 
     // 작업 상세 조회
@@ -61,6 +61,7 @@ public class TaskService {
     public TaskDetailResponse getOneTask(Long id) {
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(task.getAssignee().getId());
+
         return TaskDetailResponse.from(TaskDto.from(task), AssigneeResponse.from(assignee));
     }
 
@@ -69,8 +70,12 @@ public class TaskService {
     public PageResponse<TaskGetResponse> getAllTask(String status, String search, Long assigneeId, Pageable pageable) {
         Page<Task> taskPage = taskRepository.getTasks(status, search, assigneeId, pageable);
         Page<TaskDto> taskList = taskPage.map(TaskDto::from);
-        Page<TaskGetResponse> taskPageList = taskList.map(taskDto -> TaskGetResponse.from(taskDto, AssigneeResponse.from(taskDto.getAssignee())));
-        return PageResponse.from(taskPageList);
+
+        return PageResponse.from(taskList
+                .map(taskDto -> TaskGetResponse
+                        .from(taskDto, AssigneeResponse
+                                .from(taskDto
+                                        .getAssignee()))));
     }
 
     // 작업 삭제
@@ -92,6 +97,7 @@ public class TaskService {
         task.changeStatus(newStatus);
         taskRepository.save(task);
         TaskDto dto = TaskDto.from(task);
+
         return TaskGetResponse.from(dto, AssigneeResponse.from(assignee));
     }
 

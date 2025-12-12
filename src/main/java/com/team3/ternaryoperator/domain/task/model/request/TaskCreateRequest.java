@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class TaskCreateRequest {
 
-    @NotBlank(message = "제목을 작성해주세요.")
-    @Size(max = 100, message = "100이하로 작성해주세요.")
+    @NotBlank(message = "제목을 입력해주세요.")
+    @Size(max = 100, message = "100자 이내로 입력해주세요.")
     private String title;
 
-    @NotBlank(message = "설명을 작성해주세요.")
-    @Size(max = 255, message = "255이하로 작성해주세요.")
+    @NotBlank(message = "설명을 입력해주세요.")
+    @Size(max = 255, message = "255자 이내로 입력해주세요.")
     private String description;
 
     @NotBlank(message = "우선순위를 입력해주세요.")

@@ -83,7 +83,8 @@ public class CommentService {
 
         // commentPage.map(comment -> CommentResponse.from(comment)) 과 동일하다
         Page<CommentGetResponse> mapped = comments
-                .map(comment -> CommentGetResponse.from(CommentGetDto.from(comment)));
+                .map(comment -> CommentGetResponse
+                        .from(CommentGetDto.from(comment)));
 
         return PageResponse.from(mapped);
     }
@@ -104,9 +105,8 @@ public class CommentService {
 
         comment.update(request.getContent());
 
-        CommentDto dto = CommentDto.from(comment);
 
-        return CommentUpdateResponse.from(dto);
+        return CommentUpdateResponse.from(CommentDto.from(comment));
     }
 
     @Transactional

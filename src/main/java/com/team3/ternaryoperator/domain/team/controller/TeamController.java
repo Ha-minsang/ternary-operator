@@ -29,7 +29,10 @@ public class TeamController {
 
         TeamDetailResponse response = teamService.createTeam(authUser, request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.success(response, "팀이 생성되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(CommonResponse
+                        .success(response, "팀이 생성되었습니다."));
     }
 
     @GetMapping
@@ -37,7 +40,10 @@ public class TeamController {
 
         List<TeamDetailResponse> response = teamService.getAllTeam();
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 목록 조회 성공"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse
+                        .success(response, "팀 목록 조회 성공"));
     }
 
     @GetMapping("/{id}")
@@ -45,7 +51,10 @@ public class TeamController {
 
         TeamDetailResponse response = teamService.getOneTeam(id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 조회 성공"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse
+                        .success(response, "팀 조회 성공"));
     }
 
     @PutMapping("/{id}")
@@ -56,7 +65,10 @@ public class TeamController {
 
         TeamDetailResponse response = teamService.updateTeam(authUser, id, request);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 정보가 수정되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse
+                        .success(response, "팀 정보가 수정되었습니다."));
     }
 
     @DeleteMapping("/{id}")
@@ -64,7 +76,10 @@ public class TeamController {
 
         teamService.deleteTeam(authUser, id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(null, "팀이 삭제되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse
+                        .success(null, "팀이 삭제되었습니다."));
     }
 
     @PostMapping("/{teamId}/members")
@@ -74,7 +89,10 @@ public class TeamController {
 
         TeamResponse response = teamService.createTeamMember(teamId, request);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 멤버가 추가되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse
+                        .success(response, "팀 멤버가 추가되었습니다."));
     }
 
     @GetMapping("/{teamId}/members")
@@ -82,7 +100,10 @@ public class TeamController {
 
         List<TeamGetMemberResponse> response = teamService.getTeamMember(teamId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(response, "팀 멤버 조회 성공"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse
+                        .success(response, "팀 멤버 조회 성공"));
     }
 
     @DeleteMapping("/{teamId}/members/{userId}")
@@ -93,6 +114,9 @@ public class TeamController {
 
         teamService.deleteTeamMember(authUser, teamId, userId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(null, "팀 멤버가 제거되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse
+                        .success(null, "팀 멤버가 제거되었습니다."));
     }
 }

@@ -22,6 +22,8 @@ public class SearchController {
             @RequestParam("query") String query
     ) {
         SearchResponse result = searchService.search(query);
-        return ResponseEntity.ok(CommonResponse.success(result, "검색 성공"));
+
+        return ResponseEntity
+                .ok(CommonResponse.success(result, "검색 성공"));
     }
 }
