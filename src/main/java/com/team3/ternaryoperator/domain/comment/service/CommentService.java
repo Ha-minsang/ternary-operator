@@ -145,7 +145,7 @@ public class CommentService {
         }
 
         if (!comment.getUser().getId().equals(userId)) {
-            throw new CustomException(ErrorCode.COMMENT_FORBIDDEN_ONLY_USER);
+            throw new CustomException(ErrorCode.COMMENT_FORBIDDEN_NOT_OWNER);
         }
 
         comment.update(request.getContent());
@@ -168,7 +168,7 @@ public class CommentService {
         // 작성자 or ADMIN 권한 체크
         if (!comment.getUser().getId().equals(authUser.getId())
                 && authUser.getRole() != UserRole.ADMIN) {
-            throw new CustomException(ErrorCode.COMMENT_NOT_DELETE_AUTHORIZATION);
+            throw new CustomException(ErrorCode.COMMENT_DELETE_PERMISSION_DENIED);
         }
 
         activityService.saveActivity(ActivityType.COMMENT_DELETED, comment.getUser().getId(), taskId, comment.getTask().getTitle());

@@ -2,6 +2,7 @@ package com.team3.ternaryoperator.domain.auth.service;
 
 import com.team3.ternaryoperator.common.aspect.ActivityLog;
 import com.team3.ternaryoperator.common.entity.User;
+import com.team3.ternaryoperator.common.exception.AuthException;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.common.security.JwtUtil;
@@ -33,7 +34,7 @@ public class AuthService {
         // 비밀번호 불일치시 예외 처리
         boolean matches = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!matches) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+            throw new AuthException(ErrorCode.INVALID_PASSWORD);
         }
 
         // 토큰 생성
@@ -51,7 +52,7 @@ public class AuthService {
         // 비밀번호 불일치시 예외 처리
         boolean matches = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!matches) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+            throw new AuthException(ErrorCode.INVALID_PASSWORD);
         }
         return new VerifyPasswordResponse(true);
     }

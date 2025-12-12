@@ -374,7 +374,7 @@ class TaskServiceTest {
         );
 
         // then
-        assertEquals(ErrorCode.TASK_INVALID_STATUS_FLOW, exception.getErrorCode());
+        assertEquals(ErrorCode.TASK_INVALID_STATUS, exception.getErrorCode());
     }
 
     @Test
@@ -440,7 +440,7 @@ class TaskServiceTest {
         ReflectionTestUtils.setField(task, "id", taskId);
         given(taskRepository.findById(taskId)).willReturn(Optional.of(task));
         doNothing().when(activityService).saveActivity(any(ActivityType.class), any(Long.class), any(Long.class), any(String.class));
-        
+
         // when
         assertDoesNotThrow(() -> service.deleteTask(authUser, taskId));
 

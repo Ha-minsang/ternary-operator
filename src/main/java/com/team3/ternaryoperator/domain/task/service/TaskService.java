@@ -124,7 +124,7 @@ public class TaskService {
     // 담당자 일치 확인
     private void matchedAssignee(Long assigneeId, Long taskUserId) {
         if (!assigneeId.equals(taskUserId)) {
-            throw new CustomException(TASK_FORBIDDEN_ONLY_ASSIGNEE);
+            throw new CustomException(TASK_FORBIDDEN_NOT_ASSIGNEE);
         }
     }
 }

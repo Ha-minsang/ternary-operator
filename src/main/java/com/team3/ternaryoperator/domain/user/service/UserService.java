@@ -3,6 +3,7 @@ package com.team3.ternaryoperator.domain.user.service;
 import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
+import com.team3.ternaryoperator.common.exception.AuthException;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
@@ -29,15 +30,18 @@ public class UserService {
     private final TaskRepository taskRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // 회원가입
     @Transactional
     public UserResponse signUp(UserCreateRequest request) {
 
+        // Username 중복 여부 확인
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new CustomException(ErrorCode.DUPLICATE_USERNAME);
+            throw new CustomException(ErrorCode.USER_DUPLICATE_USERNAME);
         }
 
+        //
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+            throw new CustomException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
 
         String encodedPassword = passwordEncoder.encode(request.getPassword());
@@ -80,7 +84,7 @@ public class UserService {
         User user = getUserByIdOrThrow(id);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+            throw new AuthException(ErrorCode.INVALID_PASSWORD);
         }
 
         if (!authUser.getId().equals(id)) {
@@ -88,7 +92,7 @@ public class UserService {
         }
 
         if (!(request.getEmail().equals(user.getEmail())) && userRepository.existsByEmail(request.getEmail())) {
-            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+            throw new CustomException(ErrorCode.USER_DUPLICATE_EMAIL);
         }
 
         if (!request.getName().equals(user.getName())) {

@@ -1,8 +1,8 @@
 package com.team3.ternaryoperator.common.entity;
 
 import com.team3.ternaryoperator.common.exception.CustomException;
-import com.team3.ternaryoperator.domain.task.enums.*;
-import com.team3.ternaryoperator.domain.task.model.request.TaskStatusUpdateRequest;
+import com.team3.ternaryoperator.domain.task.enums.TaskPriority;
+import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
 import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -12,7 +12,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
-import static com.team3.ternaryoperator.common.exception.ErrorCode.TASK_INVALID_STATUS_FLOW;
+import static com.team3.ternaryoperator.common.exception.ErrorCode.TASK_INVALID_STATUS;
 
 @Getter
 @Entity
@@ -69,11 +69,10 @@ public class Task extends BaseEntity {
     public void changeStatus(TaskStatus newStatus) {
         if (this.status == TaskStatus.TODO && newStatus == TaskStatus.IN_PROGRESS) {
             this.status = newStatus;
-        }
-        else if (this.status == TaskStatus.IN_PROGRESS && newStatus == TaskStatus.DONE) {
+        } else if (this.status == TaskStatus.IN_PROGRESS && newStatus == TaskStatus.DONE) {
             this.status = newStatus;
         } else {
-            throw new CustomException(TASK_INVALID_STATUS_FLOW);
+            throw new CustomException(TASK_INVALID_STATUS);
         }
     }
 }

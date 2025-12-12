@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.team3.ternaryoperator.common.exception.ErrorCode.TEAM_NAME_DUPLICATED;
+import static com.team3.ternaryoperator.common.exception.ErrorCode.TEAM_DUPLICATE_NAME;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +44,7 @@ public class TeamService {
 
         // 팀 이름 중복 체크
         if (teamRepository.existsByName(name)) {
-            throw new CustomException(TEAM_NAME_DUPLICATED);
+            throw new CustomException(TEAM_DUPLICATE_NAME);
         }
 
         Team newTeam = new Team(name, description);
@@ -82,7 +82,7 @@ public class TeamService {
         // 수정 권한 확인
         boolean isMember = userRepository.existsByIdAndTeam_Id(authUser.getId(), id);
         if (!isMember) {
-            throw new CustomException(ErrorCode.NO_PERMISSION_TEAM_UPDATE);
+            throw new CustomException(ErrorCode.TEAM_UPDATE_PERMISSION_DENIED);
         }
 
         String name = request.getName();
@@ -101,13 +101,13 @@ public class TeamService {
         // 삭제 권한 확인
         boolean isMember = userRepository.existsByIdAndTeam_Id(authUser.getId(), id);
         if (!isMember) {
-            throw new CustomException(ErrorCode.NO_PERMISSION_TEAM_DELETE);
+            throw new CustomException(ErrorCode.TEAM_DELETE_PERMISSION_DENIED);
         }
 
         // 팀 멤버 수 확인
         long memberCount = userRepository.countByTeam_Id(id);
         if (memberCount > 1) {
-            throw new CustomException(ErrorCode.EXIST_MEMBER);
+            throw new CustomException(ErrorCode.TEAM_MEMBER_EXIST);
         }
 
         // 본인 팀 삭제
@@ -129,7 +129,7 @@ public class TeamService {
         // 소속 체크
         Team current = targetUser.getTeam();
         if (current != null) {
-            throw new CustomException(ErrorCode.ALREADY_IN_TEAM);
+            throw new CustomException(ErrorCode.TEAM_ALREADY_MEMBER);
         }
 
         targetUser.joinTeam(foundTeam);
@@ -173,7 +173,7 @@ public class TeamService {
 
         // 제거 권한 확인
         if (!authUser.getId().equals(userId)) {
-            throw new CustomException(ErrorCode.NO_PERMISSION_TEAM_MEMBER_DELETE);
+            throw new CustomException(ErrorCode.TEAM_MEMBER_DELETE_PERMISSION_DENIED);
         }
 
         target.changeTeam(null);
