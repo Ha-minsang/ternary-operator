@@ -21,8 +21,9 @@ public class Activity extends BaseEntity {
     @Column
     private ActivityType activityType;
 
-    @Column
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column
     private Long taskId;
@@ -30,9 +31,9 @@ public class Activity extends BaseEntity {
     @Column
     private String description;
 
-    public Activity(ActivityType activityType, Long userId, Long taskId, String description) {
+    public Activity(ActivityType activityType, User user, Long taskId, String description) {
         this.activityType = activityType;
-        this.userId = userId;
+        this.user = user;
         this.taskId = taskId;
         this.description = description;
     }

@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -28,7 +29,7 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (cond.getActivityType() != null) {
-            builder.and(activity.type.eq(cond.getActivityType().name()));
+            builder.and(activity.activityType.eq(cond.getActivityType()));
         }
 
         if (cond.getTaskId() != null) {
@@ -36,22 +37,22 @@ public class ActivityRepositoryImpl implements ActivityRepositoryCustom {
         }
 
         if (cond.getStartDate() != null) {
-            builder.and(activity.timestamp.goe(cond.getStartDate().atStartOfDay()));
+            LocalDateTime start = cond.getStartDate().atStartOfDay();
+            builder.and(activity.createdAt.goe(start));
         }
 
         if (cond.getEndDate() != null) {
-            builder.and(activity.timestamp.loe(cond.getEndDate().atStartOfDay()));
+            LocalDateTime endExclusive = cond.getEndDate().plusDays(1).atStartOfDay();
+            builder.and(activity.createdAt.lt(endExclusive));
         }
 
-        // 쿼리 실행
         List<Activity> activities = jpaQueryFactory.selectFrom(activity)
                 .where(builder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(activity.timestamp.desc()) // 원하는 정렬 기준
+                .orderBy(activity.createdAt.desc()) // 원하는 정렬 기준
                 .fetch();
 
-        // 전체 데이터 개수
         Long total = jpaQueryFactory.select(activity.count())
                 .from(activity)
                 .where(builder)
