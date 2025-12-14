@@ -24,24 +24,21 @@ public class DashboardService {
 
     private static final List<String> WEEKDAYS = List.of("월", "화", "수", "목", "금", "토", "일");
 
-    // 대시보드 통계
+    // 대시보드 통계 조회
     @Transactional(readOnly = true)
     public DashboardStatsResponse getDashboardStats(AuthUser authUser) {
         return taskRepository.findDashboardCounts(authUser.getId());
     }
 
-    // 주간 작업 추세
+    // 주간 작업 추세 조회
     public List<WeeklyTrendItemResponse> getWeeklyTrend() {
-
         LocalDate today = LocalDate.now();
         LocalDate startDate = today.minusDays(6);
 
         List<WeeklyTrendItemResponse> result = new ArrayList<>();
 
         for (int i = 0; i < 7; i++) {
-
             LocalDate target = startDate.plusDays(i);
-
             String weekdayName = WEEKDAYS.get(target.getDayOfWeek().getValue() - 1);
 
             long created = taskRepository.countCreatedByDate(target);
@@ -57,7 +54,7 @@ public class DashboardService {
         return result;
     }
 
-    // 내 작업 요약
+    // 내 작업 요약 조회
     public MyTaskSummaryResponse getMyTaskSummary(AuthUser authUser) {
         List<Task> tasks = taskRepository.findAllByAssigneeId(authUser.getId());
 
@@ -67,10 +64,7 @@ public class DashboardService {
 
         LocalDate today = LocalDate.now();
         for (Task task : tasks) {
-            if (task.getDueDate() == null) {
-                continue;
-            }
-            if (task.getStatus() == TaskStatus.DONE) {
+            if (task.getDueDate() == null || task.getStatus() == TaskStatus.DONE) {
                 continue;
             }
 

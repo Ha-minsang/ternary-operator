@@ -34,10 +34,10 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommonResponse<UserDetailResponse>> getUser(
+    public ResponseEntity<CommonResponse<UserDetailResponse>> getOneUser(
             @PathVariable Long id
     ) {
-        UserDetailResponse response = userService.getUser(id);
+        UserDetailResponse response = userService.getOneUser(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(CommonResponse.success(response, "사용자 정보 조회 성공."));

@@ -5,7 +5,8 @@ import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
-import com.team3.ternaryoperator.common.exception.CustomException;
+import com.team3.ternaryoperator.common.exception.TaskException;
+import com.team3.ternaryoperator.common.exception.UserException;
 import com.team3.ternaryoperator.domain.activity.enums.ActivityType;
 import com.team3.ternaryoperator.domain.activity.service.ActivityService;
 import com.team3.ternaryoperator.domain.task.enums.TaskPriority;
@@ -38,30 +39,42 @@ public class TaskService {
     private final ActivityService activityService;
 
     // 작업 생성
-    @Transactional
     @ActivityLog
+    @Transactional
     public TaskResponse createTask(AuthUser authUser, TaskCreateRequest request) {
         User assignee = getUserByIdOrThrow(authUser.getId());
         TaskPriority taskPriority = TaskPriority.valueOf(request.getPriority());
-        Task task = taskRepository.save(new Task(request.getTitle(), request.getDescription(), TaskStatus.TODO, taskPriority, assignee, request.getDueDate()));
-        TaskDto dto = TaskDto.from(task);
+
+        Task task = taskRepository.save(new Task(
+                request.getTitle(),
+                request.getDescription(),
+                TaskStatus.TODO,
+                taskPriority,
+                assignee,
+                request.getDueDate()
+        ));
+
         activityService.saveActivity(ActivityType.TASK_CREATED, authUser.getId(), task.getId(), task.getTitle());
-        return TaskResponse.from(dto);
+
+        return TaskResponse.from(TaskDto.from(task));
     }
 
     // 작업 수정
-    @Transactional
     @ActivityLog
+    @Transactional
     public TaskResponse updateTask(AuthUser authUser, Long taskId, TaskUpdateRequest request) {
         User assignee = getUserByIdOrThrow(authUser.getId());
         Task task = getTaskByIdOrThrow(taskId);
         User newAssignee = getUserByIdOrThrow(request.getAssigneeId());
+
         matchedAssignee(assignee.getId(), task.getAssignee().getId());
         task.update(request, newAssignee);
+
         taskRepository.save(task);
-        TaskDto dto = TaskDto.from(task);
+
         activityService.saveActivity(ActivityType.TASK_UPDATED, authUser.getId(), task.getId(), task.getTitle());
-        return TaskResponse.from(dto);
+
+        return TaskResponse.from(TaskDto.from(task));
     }
 
     // 작업 상세 조회
@@ -69,62 +82,74 @@ public class TaskService {
     public TaskDetailResponse getOneTask(Long id) {
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(task.getAssignee().getId());
+
         return TaskDetailResponse.from(TaskDto.from(task), AssigneeResponse.from(assignee));
     }
 
     // 작업 목록 조회
     @Transactional(readOnly = true)
-    public PageResponse<TaskGetResponse> getAllTask(String status, String search, Long assigneeId, Pageable pageable) {
+    public PageResponse<TaskGetResponse> getAllTask(
+            String status, String search, Long assigneeId, Pageable pageable) {
+
         Page<Task> taskPage = taskRepository.getTasks(status, search, assigneeId, pageable);
         Page<TaskDto> taskList = taskPage.map(TaskDto::from);
-        Page<TaskGetResponse> taskPageList = taskList.map(taskDto -> TaskGetResponse.from(taskDto, AssigneeResponse.from(taskDto.getAssignee())));
+        Page<TaskGetResponse> taskPageList = taskList.map(taskDto ->
+                TaskGetResponse.from(taskDto, AssigneeResponse.from(taskDto.getAssignee())));
+
         return PageResponse.from(taskPageList);
     }
 
     // 작업 삭제
-    @Transactional
     @ActivityLog
+    @Transactional
     public void deleteTask(AuthUser authUser, Long id) {
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(authUser.getId());
+
         matchedAssignee(assignee.getId(), task.getAssignee().getId());
+
         activityService.saveActivity(ActivityType.TASK_DELETED, authUser.getId(), task.getId(), task.getTitle());
+
         task.softDelete();
     }
 
     // 작업 상태 변경
     @Transactional
     @ActivityLog
-    public TaskGetResponse updateTaskStatus(AuthUser authUser, Long id, @Valid TaskStatusUpdateRequest request) {
+    public TaskGetResponse updateTaskStatus(
+            AuthUser authUser, Long id, @Valid TaskStatusUpdateRequest request) {
+
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(authUser.getId());
+
         matchedAssignee(assignee.getId(), task.getAssignee().getId());
+
         TaskStatus newStatus = TaskStatus.valueOf(request.getStatus());
         task.changeStatus(newStatus);
+
         taskRepository.save(task);
-        TaskDto dto = TaskDto.from(task);
+
         activityService.saveActivity(ActivityType.TASK_STATUS_CHANGED, authUser.getId(), task.getId(), task.getTitle());
-        return TaskGetResponse.from(dto, AssigneeResponse.from(assignee));
+
+        return TaskGetResponse.from(TaskDto.from(task), AssigneeResponse.from(assignee));
     }
 
-    // 유저 아이디가 일치하는 유저가 없으면 예외처리
+    // User 찾기 (없으면 예외 발생)
     private User getUserByIdOrThrow(Long id) {
-        return userRepository.findById(id).orElseThrow(
-                () -> new CustomException(USER_NOT_FOUND)
-        );
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserException(USER_NOT_FOUND)); // USER_NOT_FOUND 예외 발생
     }
 
-    // 작업 아이디가 일치하는 작업이 없으면 예외처리
+    // Task 찾기 (없으면 예외 발생)
     private Task getTaskByIdOrThrow(Long id) {
-        return taskRepository.findById(id).orElseThrow(
-                () -> new CustomException(TASK_NOT_FOUND)
-        );
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new TaskException(TASK_NOT_FOUND)); // TASK_NOT_FOUND 예외 발생
     }
 
     // 담당자 일치 확인
     private void matchedAssignee(Long assigneeId, Long taskUserId) {
         if (!assigneeId.equals(taskUserId)) {
-            throw new CustomException(TASK_FORBIDDEN_NOT_ASSIGNEE);
+            throw new TaskException(TASK_FORBIDDEN_NOT_ASSIGNEE); // TASK_FORBIDDEN_NOT_ASSIGNEE 예외 발생
         }
     }
 }
