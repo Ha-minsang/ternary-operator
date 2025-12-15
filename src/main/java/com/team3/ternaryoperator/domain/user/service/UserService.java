@@ -15,12 +15,11 @@ import com.team3.ternaryoperator.domain.user.model.response.UserDetailResponse;
 import com.team3.ternaryoperator.domain.user.model.response.UserResponse;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +60,7 @@ public class UserService {
 
     // User 정보 수정
     @Transactional
-    public UserDetailResponse updateUser(AuthUser authUser, Long userId, @Valid UserUpdateRequest request) {
+    public UserDetailResponse updateUser(AuthUser authUser, Long userId, UserUpdateRequest request) {
         User user = getUserByIdOrThrow(userId);
         validatePassword(request, user);
         validatePermission(authUser, userId);
@@ -88,7 +87,7 @@ public class UserService {
     }
 
     // Team에 추가 할 수 있는 User 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<UserResponse> getAvailableUsers() {
         return userRepository.findAllByTeamIsNull().stream()
                 .map(UserDto::from)
@@ -131,7 +130,7 @@ public class UserService {
     }
 
     // User 정보 수정
-    private static void updateUserInfo(UserUpdateRequest request, User user) {
+    private void updateUserInfo(UserUpdateRequest request, User user) {
         if (!request.getName().equals(user.getName())) {
             user.updateName(request.getName());
         }
@@ -140,4 +139,3 @@ public class UserService {
         }
     }
 }
-

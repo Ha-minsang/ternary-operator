@@ -23,16 +23,18 @@ import com.team3.ternaryoperator.domain.comment.repository.CommentRepository;
 import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
 import com.team3.ternaryoperator.domain.user.enums.UserRole;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,8 +46,8 @@ public class CommentService {
     private final ActivityService activityService;
 
     // 댓글 생성
-    @Transactional
     @ActivityLog
+    @Transactional
     public CommentResponse createComment(Long taskId, Long userId, CommentCreateRequest request) {
         Task task = getTaskByIdOrThrow(taskId);
         User user = getUserByIdOrThrow(userId);
@@ -80,8 +82,8 @@ public class CommentService {
     }
 
     // 댓글 수정
-    @Transactional
     @ActivityLog
+    @Transactional
     public CommentUpdateResponse updateComment(Long taskId, Long commentId, Long userId, CommentUpdateRequest request) {
         Comment comment = getCommentByIdOrThrow(commentId, taskId);
 
@@ -94,13 +96,18 @@ public class CommentService {
     }
 
     // 댓글 삭제
-    @Transactional
     @ActivityLog
+    @Transactional
     public void deleteComment(Long taskId, Long commentId, AuthUser authUser) {
         Comment comment = getCommentByIdOrThrow(commentId, taskId);
         validateDeletePermission(comment, authUser);
 
-        activityService.saveActivity(ActivityType.COMMENT_DELETED, comment.getUser().getId(), taskId, comment.getTask().getTitle());
+        activityService.saveActivity(
+                ActivityType.COMMENT_DELETED,
+                comment.getUser().getId(),
+                taskId,
+                comment.getTask().getTitle()
+        );
 
         deleteChildComments(comment);
         comment.softDelete();
@@ -139,7 +146,7 @@ public class CommentService {
     private List<Long> getParentIds(Page<Comment> parentPage) {
         return parentPage.getContent().stream()
                 .map(Comment::getId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // 부모 댓글 ID로 대댓글 조회
@@ -150,7 +157,7 @@ public class CommentService {
     // 대댓글을 부모 ID별로 그룹화
     private Map<Long, List<Comment>> groupRepliesByParentId(List<Comment> replies) {
         return replies.stream()
-                .collect(Collectors.groupingBy(comment -> comment.getParentComment().getId()));
+                .collect(java.util.stream.Collectors.groupingBy(comment -> comment.getParentComment().getId()));
     }
 
     // 댓글 리스트 정렬

@@ -8,13 +8,12 @@ import com.team3.ternaryoperator.domain.user.model.response.UserDetailResponse;
 import com.team3.ternaryoperator.domain.user.model.response.UserResponse;
 import com.team3.ternaryoperator.domain.user.service.UserService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +34,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<UserDetailResponse>> getOneUser(
+            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long id
     ) {
         UserDetailResponse response = userService.getOneUser(id);
@@ -44,11 +44,13 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse<List<UserResponse>>> getUsers() {
+    public ResponseEntity<CommonResponse<List<UserResponse>>> getUsers(
+            @AuthenticationPrincipal AuthUser authUser
+    ) {
         List<UserResponse> users = userService.getUsers();
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success(users, "사용자 목록 조회 성공"));
+                .body(CommonResponse.success(users, "사용자 목록 조회 성공."));
     }
 
     @PutMapping("/{id}")
@@ -63,21 +65,25 @@ public class UserController {
                 .body(CommonResponse.success(response, "사용자 정보가 수정되었습니다."));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponse<Void>> deleteUser(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long id
     ) {
         userService.deleteUser(authUser, id);
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.success(null, "회원 탈퇴가 완료되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success(null, "회원 탈퇴가 완료되었습니다."));
     }
 
     @GetMapping("/available")
     public ResponseEntity<CommonResponse<List<UserResponse>>> getAvailableUsers(
+            @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(required = false) Long teamId
     ) {
         List<UserResponse> response = userService.getAvailableUsers();
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(CommonResponse.success(response, "추가 가능한 사용자 목록 조회 성공"));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.success(response, "추가 가능한 사용자 목록 조회 성공."));
     }
 }

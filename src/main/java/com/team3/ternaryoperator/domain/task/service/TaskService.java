@@ -5,6 +5,7 @@ import com.team3.ternaryoperator.common.dto.AuthUser;
 import com.team3.ternaryoperator.common.dto.PageResponse;
 import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
+import com.team3.ternaryoperator.common.exception.ErrorCode;
 import com.team3.ternaryoperator.common.exception.TaskException;
 import com.team3.ternaryoperator.common.exception.UserException;
 import com.team3.ternaryoperator.domain.activity.enums.ActivityType;
@@ -27,8 +28,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.team3.ternaryoperator.common.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -88,13 +87,12 @@ public class TaskService {
 
     // 작업 목록 조회
     @Transactional(readOnly = true)
-    public PageResponse<TaskGetResponse> getAllTask(
-            String status, String search, Long assigneeId, Pageable pageable) {
-
+    public PageResponse<TaskGetResponse> getAllTask(String status, String search, Long assigneeId, Pageable pageable) {
         Page<Task> taskPage = taskRepository.getTasks(status, search, assigneeId, pageable);
         Page<TaskDto> taskList = taskPage.map(TaskDto::from);
         Page<TaskGetResponse> taskPageList = taskList.map(taskDto ->
-                TaskGetResponse.from(taskDto, AssigneeResponse.from(taskDto.getAssignee())));
+                TaskGetResponse.from(taskDto, AssigneeResponse.from(taskDto.getAssignee()))
+        );
 
         return PageResponse.from(taskPageList);
     }
@@ -114,11 +112,9 @@ public class TaskService {
     }
 
     // 작업 상태 변경
-    @Transactional
     @ActivityLog
-    public TaskGetResponse updateTaskStatus(
-            AuthUser authUser, Long id, @Valid TaskStatusUpdateRequest request) {
-
+    @Transactional
+    public TaskGetResponse updateTaskStatus(AuthUser authUser, Long id, TaskStatusUpdateRequest request) {
         Task task = getTaskByIdOrThrow(id);
         User assignee = getUserByIdOrThrow(authUser.getId());
 
@@ -137,19 +133,19 @@ public class TaskService {
     // User 찾기 (없으면 예외 발생)
     private User getUserByIdOrThrow(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserException(USER_NOT_FOUND)); // USER_NOT_FOUND 예외 발생
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
     }
 
     // Task 찾기 (없으면 예외 발생)
     private Task getTaskByIdOrThrow(Long id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new TaskException(TASK_NOT_FOUND)); // TASK_NOT_FOUND 예외 발생
+                .orElseThrow(() -> new TaskException(ErrorCode.TASK_NOT_FOUND));
     }
 
     // 담당자 일치 확인
     private void matchedAssignee(Long assigneeId, Long taskUserId) {
         if (!assigneeId.equals(taskUserId)) {
-            throw new TaskException(TASK_FORBIDDEN_NOT_ASSIGNEE); // TASK_FORBIDDEN_NOT_ASSIGNEE 예외 발생
+            throw new TaskException(ErrorCode.TASK_FORBIDDEN_NOT_ASSIGNEE);
         }
     }
 }
