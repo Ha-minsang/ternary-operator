@@ -36,7 +36,14 @@ public class UserService {
         checkDuplicateEmail(request.getEmail());
 
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-        User user = new User(request.getUsername(), request.getEmail(), request.getName(), encodedPassword, UserRole.USER, null);
+        User user = new User(
+                request.getUsername(),
+                request.getEmail(),
+                request.getName(),
+                encodedPassword,
+                UserRole.USER,
+                null
+        );
         User saved = userRepository.save(user);
 
         return UserResponse.from(UserDto.from(saved));
