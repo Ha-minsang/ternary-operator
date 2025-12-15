@@ -1,0 +1,151 @@
+package com.team3.ternaryoperator.domain.task.service;
+
+import com.team3.ternaryoperator.common.aspect.ActivityLog;
+import com.team3.ternaryoperator.common.dto.AuthUser;
+import com.team3.ternaryoperator.common.dto.PageResponse;
+import com.team3.ternaryoperator.common.entity.Task;
+import com.team3.ternaryoperator.common.entity.User;
+import com.team3.ternaryoperator.common.exception.ErrorCode;
+import com.team3.ternaryoperator.common.exception.TaskException;
+import com.team3.ternaryoperator.common.exception.UserException;
+import com.team3.ternaryoperator.domain.activity.enums.ActivityType;
+import com.team3.ternaryoperator.domain.activity.service.ActivityService;
+import com.team3.ternaryoperator.domain.task.enums.TaskPriority;
+import com.team3.ternaryoperator.domain.task.enums.TaskStatus;
+import com.team3.ternaryoperator.domain.task.model.dto.TaskDto;
+import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
+import com.team3.ternaryoperator.domain.task.model.request.TaskStatusUpdateRequest;
+import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
+import com.team3.ternaryoperator.domain.task.model.response.AssigneeResponse;
+import com.team3.ternaryoperator.domain.task.model.response.TaskDetailResponse;
+import com.team3.ternaryoperator.domain.task.model.response.TaskGetResponse;
+import com.team3.ternaryoperator.domain.task.model.response.TaskResponse;
+import com.team3.ternaryoperator.domain.task.repository.TaskRepository;
+import com.team3.ternaryoperator.domain.user.repository.UserRepository;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class TaskService {
+
+    private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final ActivityService activityService;
+
+    // 작업 생성
+    @ActivityLog
+    @Transactional
+    public TaskResponse createTask(AuthUser authUser, TaskCreateRequest request) {
+        User assignee = getUserByIdOrThrow(authUser.getId());
+        TaskPriority taskPriority = TaskPriority.valueOf(request.getPriority());
+
+        Task task = taskRepository.save(new Task(
+                request.getTitle(),
+                request.getDescription(),
+                TaskStatus.TODO,
+                taskPriority,
+                assignee,
+                request.getDueDate()
+        ));
+
+        activityService.saveActivity(ActivityType.TASK_CREATED, authUser.getId(), task.getId(), task.getTitle());
+
+        return TaskResponse.from(TaskDto.from(task));
+    }
+
+    // 작업 수정
+    @ActivityLog
+    @Transactional
+    public TaskResponse updateTask(AuthUser authUser, Long taskId, TaskUpdateRequest request) {
+        User assignee = getUserByIdOrThrow(authUser.getId());
+        Task task = getTaskByIdOrThrow(taskId);
+        User newAssignee = getUserByIdOrThrow(request.getAssigneeId());
+
+        matchedAssignee(assignee.getId(), task.getAssignee().getId());
+        task.update(request, newAssignee);
+
+        taskRepository.save(task);
+
+        activityService.saveActivity(ActivityType.TASK_UPDATED, authUser.getId(), task.getId(), task.getTitle());
+
+        return TaskResponse.from(TaskDto.from(task));
+    }
+
+    // 작업 상세 조회
+    @Transactional(readOnly = true)
+    public TaskDetailResponse getOneTask(Long id) {
+        Task task = getTaskByIdOrThrow(id);
+        User assignee = getUserByIdOrThrow(task.getAssignee().getId());
+
+        return TaskDetailResponse.from(TaskDto.from(task), AssigneeResponse.from(assignee));
+    }
+
+    // 작업 목록 조회
+    @Transactional(readOnly = true)
+    public PageResponse<TaskGetResponse> getAllTask(String status, String search, Long assigneeId, Pageable pageable) {
+        Page<Task> taskPage = taskRepository.getTasks(status, search, assigneeId, pageable);
+        Page<TaskDto> taskList = taskPage.map(TaskDto::from);
+        Page<TaskGetResponse> taskPageList = taskList.map(taskDto ->
+                TaskGetResponse.from(taskDto, AssigneeResponse.from(taskDto.getAssignee()))
+        );
+
+        return PageResponse.from(taskPageList);
+    }
+
+    // 작업 삭제
+    @ActivityLog
+    @Transactional
+    public void deleteTask(AuthUser authUser, Long id) {
+        Task task = getTaskByIdOrThrow(id);
+        User assignee = getUserByIdOrThrow(authUser.getId());
+
+        matchedAssignee(assignee.getId(), task.getAssignee().getId());
+
+        activityService.saveActivity(ActivityType.TASK_DELETED, authUser.getId(), task.getId(), task.getTitle());
+
+        task.softDelete();
+    }
+
+    // 작업 상태 변경
+    @ActivityLog
+    @Transactional
+    public TaskGetResponse updateTaskStatus(AuthUser authUser, Long id, TaskStatusUpdateRequest request) {
+        Task task = getTaskByIdOrThrow(id);
+        User assignee = getUserByIdOrThrow(authUser.getId());
+
+        matchedAssignee(assignee.getId(), task.getAssignee().getId());
+
+        TaskStatus newStatus = TaskStatus.valueOf(request.getStatus());
+        task.changeStatus(newStatus);
+
+        taskRepository.save(task);
+
+        activityService.saveActivity(ActivityType.TASK_STATUS_CHANGED, authUser.getId(), task.getId(), task.getTitle());
+
+        return TaskGetResponse.from(TaskDto.from(task), AssigneeResponse.from(assignee));
+    }
+
+    // User 찾기 (없으면 예외 발생)
+    private User getUserByIdOrThrow(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    // Task 찾기 (없으면 예외 발생)
+    private Task getTaskByIdOrThrow(Long id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new TaskException(ErrorCode.TASK_NOT_FOUND));
+    }
+
+    // 담당자 일치 확인
+    private void matchedAssignee(Long assigneeId, Long taskUserId) {
+        if (!assigneeId.equals(taskUserId)) {
+            throw new TaskException(ErrorCode.TASK_FORBIDDEN_NOT_ASSIGNEE);
+        }
+    }
+}

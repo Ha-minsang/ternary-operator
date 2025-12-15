@@ -1,0 +1,36 @@
+package com.team3.ternaryoperator.domain.team.model.response;
+
+import com.team3.ternaryoperator.domain.team.model.dto.TeamDto;
+import com.team3.ternaryoperator.domain.team.model.dto.TeamMemberDto;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Getter
+public class TeamResponse {
+
+    private final Long id;
+    private final String name;
+    private final String description;
+    private final LocalDateTime createdAt;
+    private final List<TeamMemberDto> members;
+
+    public TeamResponse(Long id, String name, String description, LocalDateTime createdAt, List<TeamMemberDto> members) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.createdAt = createdAt;
+        this.members = members;
+    }
+
+    public static TeamResponse fromMembers(TeamDto dto, List<TeamMemberDto> members) {
+        return new TeamResponse(
+                dto.getId(),
+                dto.getName(),
+                dto.getDescription(),
+                dto.getCreatedAt(),
+                members
+        );
+    }
+}
