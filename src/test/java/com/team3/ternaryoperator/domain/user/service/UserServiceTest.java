@@ -130,7 +130,7 @@ class UserServiceTest {
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
 
         // when
-        UserDetailResponse response = userService.getUser(1L);
+        UserDetailResponse response = userService.getOneUser(1L);
 
         // then
         assertNotNull(response);
@@ -147,7 +147,7 @@ class UserServiceTest {
 
         // when
         CustomException exception = assertThrows(CustomException.class,
-                () -> userService.getUser(1L)
+                () -> userService.getOneUser(1L)
         );
 
         // then
