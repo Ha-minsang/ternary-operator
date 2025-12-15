@@ -85,7 +85,7 @@ class UserServiceTest {
         );
 
         // then
-        assertEquals(ErrorCode.DUPLICATE_USERNAME, exception.getErrorCode());
+        assertEquals(ErrorCode.USER_DUPLICATE_USERNAME, exception.getErrorCode());
     }
 
     @Test
@@ -108,6 +108,6 @@ class UserServiceTest {
         );
 
         // then
-        assertEquals(ErrorCode.DUPLICATE_EMAIL, exception.getErrorCode());
+        assertEquals(ErrorCode.USER_DUPLICATE_EMAIL, exception.getErrorCode());
     }
 }

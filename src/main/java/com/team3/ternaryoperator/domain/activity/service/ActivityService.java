@@ -12,6 +12,7 @@ import com.team3.ternaryoperator.domain.activity.model.response.ActivityResponse
 import com.team3.ternaryoperator.domain.activity.model.response.MyActivityResponse;
 import com.team3.ternaryoperator.domain.activity.repository.ActivityRepository;
 import com.team3.ternaryoperator.domain.user.repository.UserRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,8 +21,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class ActivityService {
@@ -29,29 +28,36 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final UserRepository userRepository;
 
+    // Activity 저장
     @Async
     @Transactional
     public void saveActivity(ActivityType type, Long userId, Long taskId, String taskTitle) {
+        User user = getUserOrThrow(userId);
         String description = type.createDescription(taskTitle);
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
-        );
-        Activity activity = new Activity(type, user, taskId, description);
-        activityRepository.save(activity);
+        activityRepository.save(new Activity(type, user, taskId, description));
     }
 
+    // Activity 조회
     @Transactional(readOnly = true)
     public Page<ActivityResponse> getActivities(ActivitySearchCond condition, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Activity> activities = activityRepository.getActivities(condition, pageable);
-        Page<ActivityDto> dtoPage = activities.map(ActivityDto::from);
-        return dtoPage.map(ActivityResponse::from);
+        return activityRepository.getActivities(condition, pageable)
+                .map(ActivityDto::from)
+                .map(ActivityResponse::from);
     }
 
+    // 내 Activity 조회
+    @Transactional(readOnly = true)
     public List<MyActivityResponse> getMyActivities(AuthUser authUser) {
-        Long userId = authUser.getId();
-        List<Activity> activities = activityRepository.findAllActivitiesByUserId(userId);
-        List<ActivityDto> dtoList = activities.stream().map(ActivityDto::from).toList();
-        return dtoList.stream().map(MyActivityResponse::from).toList();
+        return activityRepository.findAllActivitiesByUserId(authUser.getId()).stream()
+                .map(ActivityDto::from)
+                .map(MyActivityResponse::from)
+                .toList();
+    }
+
+    // User 찾기 (없으면 예외 발생)
+    private User getUserOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 }

@@ -5,6 +5,8 @@ import com.team3.ternaryoperator.common.entity.Task;
 import com.team3.ternaryoperator.common.entity.User;
 import com.team3.ternaryoperator.common.exception.CustomException;
 import com.team3.ternaryoperator.common.exception.ErrorCode;
+import com.team3.ternaryoperator.domain.activity.enums.ActivityType;
+import com.team3.ternaryoperator.domain.activity.service.ActivityService;
 import com.team3.ternaryoperator.domain.task.model.request.TaskCreateRequest;
 import com.team3.ternaryoperator.domain.task.model.request.TaskStatusUpdateRequest;
 import com.team3.ternaryoperator.domain.task.model.request.TaskUpdateRequest;
@@ -30,6 +32,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
@@ -38,6 +41,9 @@ class TaskServiceTest {
     private TaskRepository taskRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private ActivityService activityService;
+
     @InjectMocks
     private TaskService service;
 
@@ -57,11 +63,12 @@ class TaskServiceTest {
         User assignee = UserFixture.createUser();
         ReflectionTestUtils.setField(assignee, "id", 1L);
         given(userRepository.findById(authUser.getId())).willReturn(Optional.of(assignee));
-
-        // when
         Task savedTask = TaskFixture.createTask(assignee);
         ReflectionTestUtils.setField(savedTask, "id", 1L);
         given(taskRepository.save(any(Task.class))).willReturn(savedTask);
+        doNothing().when(activityService).saveActivity(any(ActivityType.class), any(Long.class), any(Long.class), any(String.class));
+
+        // when
         TaskResponse result = service.createTask(authUser, request);
 
         // then
@@ -123,9 +130,10 @@ class TaskServiceTest {
         User newAssignee = UserFixture.createUser();
         ReflectionTestUtils.setField(newAssignee, "id", newAssigneeId);
         given(userRepository.findById(request.getAssigneeId())).willReturn(Optional.of(newAssignee));
+        given(taskRepository.save(any(Task.class))).willAnswer(invocation -> invocation.getArgument(0));
+        doNothing().when(activityService).saveActivity(any(ActivityType.class), any(Long.class), any(Long.class), any(String.class));
 
         // when
-        given(taskRepository.save(any(Task.class))).willAnswer(invocation -> invocation.getArgument(0));
         TaskResponse result = service.updateTask(authUser, taskId, request);
 
         // then
@@ -243,11 +251,9 @@ class TaskServiceTest {
 
         Task task = TaskFixture.createTask(assignee);
         ReflectionTestUtils.setField(task, "id", taskId);
-
-        // when
         given(taskRepository.findById(taskId)).willReturn(Optional.of(task));
         given(userRepository.findById(assigneeId)).willReturn(Optional.of(assignee));
-
+        // when
         TaskDetailResponse result = service.getOneTask(taskId);
 
         // then
@@ -327,6 +333,7 @@ class TaskServiceTest {
         Task task = TaskFixture.createTask(assignee);
         ReflectionTestUtils.setField(task, "id", taskId);
         given(taskRepository.findById(taskId)).willReturn(Optional.of(task));
+        doNothing().when(activityService).saveActivity(any(ActivityType.class), any(Long.class), any(Long.class), any(String.class));
 
         // when
         given(taskRepository.save(any(Task.class))).willAnswer(invocation -> invocation.getArgument(0));
@@ -367,7 +374,7 @@ class TaskServiceTest {
         );
 
         // then
-        assertEquals(ErrorCode.TASK_INVALID_STATUS_FLOW, exception.getErrorCode());
+        assertEquals(ErrorCode.TASK_INVALID_STATUS, exception.getErrorCode());
     }
 
     @Test
@@ -432,6 +439,7 @@ class TaskServiceTest {
         Task task = TaskFixture.createTask(assignee);
         ReflectionTestUtils.setField(task, "id", taskId);
         given(taskRepository.findById(taskId)).willReturn(Optional.of(task));
+        doNothing().when(activityService).saveActivity(any(ActivityType.class), any(Long.class), any(Long.class), any(String.class));
 
         // when
         assertDoesNotThrow(() -> service.deleteTask(authUser, taskId));

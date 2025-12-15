@@ -115,7 +115,7 @@ class TeamServiceTest {
                 () -> teamService.createTeam(authUser, teamRequest));
 
         // then
-        assertEquals(ErrorCode.TEAM_NAME_DUPLICATED, exception.getErrorCode());
+        assertEquals(ErrorCode.TEAM_DUPLICATE_NAME, exception.getErrorCode());
     }
 
     @Test
@@ -249,7 +249,7 @@ class TeamServiceTest {
                 () -> teamService.updateTeam(authUser, id, teamRequest));
 
         // then
-        assertEquals(ErrorCode.NO_PERMISSION_TEAM_UPDATE, exception.getErrorCode());
+        assertEquals(ErrorCode.TEAM_UPDATE_PERMISSION_DENIED, exception.getErrorCode());
     }
 
     @Test
@@ -319,7 +319,7 @@ class TeamServiceTest {
                 () -> teamService.deleteTeam(authUser, id));
 
         // then
-        assertEquals(ErrorCode.NO_PERMISSION_TEAM_DELETE, exception.getErrorCode());
+        assertEquals(ErrorCode.TEAM_DELETE_PERMISSION_DENIED, exception.getErrorCode());
     }
 
     @Test
@@ -343,7 +343,7 @@ class TeamServiceTest {
                 () -> teamService.deleteTeam(authUser, id));
 
         // then
-        assertEquals(ErrorCode.EXIST_MEMBER, exception.getErrorCode());
+        assertEquals(ErrorCode.TEAM_MEMBER_EXIST, exception.getErrorCode());
     }
 
     @Test

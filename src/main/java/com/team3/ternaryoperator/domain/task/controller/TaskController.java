@@ -32,7 +32,7 @@ public class TaskController {
             @AuthenticationPrincipal AuthUser authUser,
             @Valid @RequestBody TaskCreateRequest request
     ) {
-        TaskResponse response =  taskService.createTask(authUser, request);
+        TaskResponse response = taskService.createTask(authUser, request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(CommonResponse.success(response, "작업이 생성되었습니다."));
@@ -59,7 +59,7 @@ public class TaskController {
         TaskDetailResponse response = taskService.getOneTask(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success(response, "작업 조회 성공"));
+                .body(CommonResponse.success(response, "작업 조회 성공."));
     }
 
     // 작업 목록 조회(페이징, 필터링)
@@ -69,11 +69,11 @@ public class TaskController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Long assigneeId,
             @PageableDefault(page = 0, size = 10) Pageable pageable
-            ) {
+    ) {
         PageResponse<TaskGetResponse> response = taskService.getAllTask(status, search, assigneeId, pageable);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(CommonResponse.success(response, "작업 목록 조회 성공"));
+                .body(CommonResponse.success(response, "작업 목록 조회 성공."));
     }
 
     // 작업 삭제
