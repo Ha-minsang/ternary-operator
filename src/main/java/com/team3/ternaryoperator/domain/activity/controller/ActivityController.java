@@ -36,7 +36,7 @@ public class ActivityController {
 
     @GetMapping("/me")
     public ResponseEntity<CommonResponse<List<MyActivityResponse>>> getMyActivities(
-            @AuthenticationPrincipal com.team3.ternaryoperator.common.dto.AuthUser authUser
+            @AuthenticationPrincipal AuthUser authUser
     ) {
         List<MyActivityResponse> response = activityService.getMyActivities(authUser);
         return ResponseEntity
