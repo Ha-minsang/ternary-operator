@@ -22,7 +22,6 @@ public class SearchController {
 
     @GetMapping
     public ResponseEntity<CommonResponse<SearchResponse>> getSearch(
-            @AuthenticationPrincipal AuthUser authUser,
             @RequestParam("query") String query
     ) {
         SearchResponse result = searchService.search(query);

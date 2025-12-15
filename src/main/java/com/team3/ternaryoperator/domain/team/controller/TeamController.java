@@ -36,9 +36,7 @@ public class TeamController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse<List<TeamDetailResponse>>> getAllTeam(
-            @AuthenticationPrincipal AuthUser authUser
-    ) {
+    public ResponseEntity<CommonResponse<List<TeamDetailResponse>>> getAllTeam() {
         List<TeamDetailResponse> response = teamService.getAllTeam();
 
         return ResponseEntity
@@ -48,7 +46,6 @@ public class TeamController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<TeamDetailResponse>> getOneTeam(
-            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long id
     ) {
         TeamDetailResponse response = teamService.getOneTeam(id);
@@ -85,7 +82,6 @@ public class TeamController {
 
     @PostMapping("/{teamId}/members")
     public ResponseEntity<CommonResponse<TeamResponse>> createTeamMember(
-            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long teamId,
             @Valid @RequestBody TeamCreateMemberRequest request
     ) {
@@ -98,7 +94,6 @@ public class TeamController {
 
     @GetMapping("/{teamId}/members")
     public ResponseEntity<CommonResponse<List<TeamGetMemberResponse>>> getTeamMember(
-            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long teamId
     ) {
         List<TeamGetMemberResponse> response = teamService.getTeamMember(teamId);

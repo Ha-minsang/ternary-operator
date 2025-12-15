@@ -54,7 +54,6 @@ public class TaskController {
     // 작업 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<TaskDetailResponse>> getOneTask(
-            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long id
     ) {
         TaskDetailResponse response = taskService.getOneTask(id);
@@ -66,7 +65,6 @@ public class TaskController {
     // 작업 목록 조회(페이징, 필터링)
     @GetMapping
     public ResponseEntity<CommonResponse<PageResponse<TaskGetResponse>>> getAllTask(
-            @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Long assigneeId,

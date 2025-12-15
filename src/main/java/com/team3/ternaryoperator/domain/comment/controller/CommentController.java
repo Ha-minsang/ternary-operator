@@ -41,7 +41,6 @@ public class CommentController {
 
     @GetMapping("/{taskId}/comments")
     public ResponseEntity<CommonResponse<PageResponse<CommentGetResponse>>> getTaskComments(
-            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long taskId,
             @RequestParam(defaultValue = "newest") String sort,
             @PageableDefault(page = 0, size = 10) Pageable pageable

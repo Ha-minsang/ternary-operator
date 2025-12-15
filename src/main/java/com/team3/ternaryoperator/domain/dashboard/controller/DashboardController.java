@@ -33,9 +33,7 @@ public class DashboardController {
 
     // 주간 작업 추세
     @GetMapping("/weekly-trend")
-    public ResponseEntity<CommonResponse<List<WeeklyTrendItemResponse>>> getWeeklyTrend(
-            @AuthenticationPrincipal AuthUser authUser
-    ) {
+    public ResponseEntity<CommonResponse<List<WeeklyTrendItemResponse>>> getWeeklyTrend() {
         List<WeeklyTrendItemResponse> response = dashboardService.getWeeklyTrend();
         return ResponseEntity
                 .status(HttpStatus.OK)

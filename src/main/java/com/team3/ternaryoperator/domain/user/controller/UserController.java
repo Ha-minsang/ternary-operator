@@ -34,7 +34,6 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<UserDetailResponse>> getOneUser(
-            @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long id
     ) {
         UserDetailResponse response = userService.getOneUser(id);
@@ -44,9 +43,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse<List<UserResponse>>> getUsers(
-            @AuthenticationPrincipal AuthUser authUser
-    ) {
+    public ResponseEntity<CommonResponse<List<UserResponse>>> getUsers() {
         List<UserResponse> users = userService.getUsers();
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -78,7 +75,7 @@ public class UserController {
 
     @GetMapping("/available")
     public ResponseEntity<CommonResponse<List<UserResponse>>> getAvailableUsers(
-            @AuthenticationPrincipal AuthUser authUser,
+            // 명세서에서 파라미터를 요구하지만 팀이 정한 정책상 user 한명당 한개의 team만 들어갈수 있다고 정하여 사용되지 않음
             @RequestParam(required = false) Long teamId
     ) {
         List<UserResponse> response = userService.getAvailableUsers();
