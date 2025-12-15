@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
                 ? e.getFieldError().getDefaultMessage()
                 : "";
 
-        ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
         String finalMessage = errorCode.getMessage() + detailMessage;
 
         CommonResponse<Void> response = CommonResponse.fail(errorCode, finalMessage);

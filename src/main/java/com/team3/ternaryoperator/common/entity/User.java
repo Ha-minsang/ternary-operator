@@ -58,10 +58,6 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
-    public void updatePassword(String password) {
-        this.password = password;
-    }
-
     public void joinTeam(Team foundTeam) {
         this.team = foundTeam;
     }
