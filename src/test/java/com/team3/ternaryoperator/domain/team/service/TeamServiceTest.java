@@ -452,7 +452,7 @@ class TeamServiceTest {
                 () -> teamService.createTeamMember(teamId, teamCreateMemberRequest));
 
         // then
-        assertEquals(ErrorCode.ALREADY_IN_TEAM, exception.getErrorCode());
+        assertEquals(ErrorCode.TEAM_ALREADY_MEMBER, exception.getErrorCode());
     }
 
     @Test
@@ -637,6 +637,6 @@ class TeamServiceTest {
                 () -> teamService.deleteTeamMember(authUser, teamId, userId));
 
         // then
-        assertEquals(ErrorCode.NO_PERMISSION_TEAM_MEMBER_DELETE, exception.getErrorCode());
+        assertEquals(ErrorCode.TEAM_MEMBER_DELETE_PERMISSION_DENIED, exception.getErrorCode());
     }
 }
