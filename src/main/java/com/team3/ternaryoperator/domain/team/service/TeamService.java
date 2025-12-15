@@ -66,7 +66,7 @@ public class TeamService {
     @Transactional
     public TeamDetailResponse updateTeam(AuthUser authUser, Long id, TeamRequest request) {
         Team foundTeam = getTeamOrThrow(id);
-        validateTeamMember(authUser.getId(), id);
+        validateTeamUpdate(authUser.getId(), id);
 
         foundTeam.updateTeamInformation(request.getName(), request.getDescription());
 
@@ -77,7 +77,7 @@ public class TeamService {
     @Transactional
     public void deleteTeam(AuthUser authUser, Long id) {
         Team foundTeam = getTeamOrThrow(id);
-        validateTeamMember(authUser.getId(), id);
+        validateTeamDelete(authUser.getId(), id);
 
         validateTeamHasSingleMember(id);
 
@@ -187,6 +187,22 @@ public class TeamService {
     private void validateSelfAction(Long authUserId, Long userId) {
         if (!authUserId.equals(userId)) {
             throw new TeamException(ErrorCode.TEAM_MEMBER_DELETE_PERMISSION_DENIED);
+        }
+    }
+
+    // Team 수정 권한 확인 (없으면 예외 발생)
+    private void validateTeamUpdate(Long userId, Long teamId) {
+        boolean isMember = userRepository.existsByIdAndTeam_Id(userId, teamId);
+        if (!isMember) {
+            throw new TeamException(ErrorCode.TEAM_UPDATE_PERMISSION_DENIED);
+        }
+    }
+
+    // Team 삭제 권한 확인 (없으면 예외 발생)
+    private void validateTeamDelete(Long userId, Long teamId) {
+        boolean isMember = userRepository.existsByIdAndTeam_Id(userId, teamId);
+        if (!isMember) {
+            throw new TeamException(ErrorCode.TEAM_DELETE_PERMISSION_DENIED);
         }
     }
 }
